@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import sys
 from Bio import SeqIO
@@ -6,9 +6,10 @@ usage = """
 Description
     This script is a modified version of the circle_check.py script from the MitoZ project
     Link: https://github.com/linzhi2013/MitoZ/blob/a43e62862dd7d7253ed4ce79b4a3e972ebb75218/version_2.3/useful_scripts/circle_check.py
-    Checking whether the sequences are circular when the sequences have
-    length >= 12Kbp
-    Create a fake gap construct based on the length of overlapping region 
+    Approach:
+    - Checking whether the sequences are circular when the sequences have
+    - length >= 12Kbp
+    - Create a fake gap construct based on the length of overlapping region 
 Usage
     python3 {0}  <in.fasta> <mismatch_allowed> <output>
 """.format(sys.argv[0])

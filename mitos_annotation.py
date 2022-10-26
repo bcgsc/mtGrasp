@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import shlex
 import subprocess
@@ -8,24 +10,17 @@ import numpy as np
 
 
 file = sys.argv[1] # input fasta file
-mito_gencode = sys.argv[2] # csv file with mitochondrial genetic code for each species
+mito_gencode = sys.argv[2] # mitochondrial genetic code used for gene annotation
 output_dir = sys.argv[3] # output directory for mitos annotation
+sample = sys.argv[4] # unique identifier for the assembly sample (e.g., accession number, species name or library ID number etc.)
 
-
-
-
-# load the csv file with mitochondrial genetic codes
-df = pd.read_csv(mito_gencode)
-species = df['Scientific Name'].to_list()
-mito_gencode = df['Mitochondrial Genetic Code'].to_list()
-
-def find_index(value, list):
-      indices = [i for i, x in enumerate(list) if x == value]
-      s = [str(integer) for integer in indices]
-      a_string = "".join(s)
-      index = int(a_string)
-      return index
-
+# get the directory of the script
+string = subprocess.check_output(['which', 'mitos_annotation.py'])
+string = string.decode('utf-8')
+# remove new line character
+string = string.strip()
+# split string by '/'
+script_dir = '/'.join(string.split('/')[0:-1])
    
 def trnF_strand_check(fas_file):
   id_list = []
@@ -46,7 +41,7 @@ def check_if_match(x, y):
 def non_trnF_strand_check(fas_file):
     
 
-    mito_genes_df = pd.read_csv('data/mito_gene_orientation.csv')
+    mito_genes_df = pd.read_csv(f'{script_dir}/data/mito_gene_orientation.csv')
     id_list = []
     for record in SeqIO.parse(fas_file, "fasta"):
         id_list.append(str(record.description))
@@ -136,7 +131,6 @@ cmd1 = f'mkdir -p {anno_dir}'
 cmd_shlex1 = shlex.split(cmd1)
 subprocess.call(cmd_shlex1)
 
-sample = file.split('/')[-2]
 #check if file empty
 # if the file is empty, skip the annotation
 if os.stat(file).st_size == 0:
@@ -149,15 +143,8 @@ if os.stat(file).st_size == 0:
     
 # if file is not empty, annotate
 else: 
-# get the scientific name from the path
-      if 'IX' in sample:
-             species_name = ' '.join(sample.split('.')[0].split('_'))
-      else:
-             species_name = ' '.join(sample.split('_')[0:-3])
-            
-        # get the mitochondrial genetic code of the species in the list
-      index = find_index(species_name, species)
-      code = mito_gencode[index]
+      
+      code = mito_gencode
       print('The mitochondrial genetic code is: %s' % (code))
         
       # get the number of sequences in the fasta file
@@ -166,7 +153,9 @@ else:
       for record in SeqIO.parse(file, "fasta"):
         seq_list.append(str(record.seq))     
       # annotate the file
-      cmd2 = f'conda run -n mitos runmitos.py -i {file} -c {code} -o {anno_dir} --linear --refdir data/refseqs_mitos/ -r refseq81m'
+      
+
+      cmd2 = f'conda run -n mitos runmitos.py -i {file} -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m'
       cmd_shlex2 = shlex.split(cmd2)
       subprocess.call(cmd_shlex2)
       
@@ -208,8 +197,11 @@ else:
       standardized_seq = remove_duplicates_in_a_list(standardized_seq)
       file_name = '%s/post_standardization.fasta'%(output_dir)
       
-      if check_if_trnF_gaa_in_fasta(fas_file) == True:
-           write_fasta_file(file_name, standardized_seq, 'StartSite_Strand_Standardized', sample)
-
+      if check_if_trnF_gaa_in_fasta(fas_file) == True and 'Scenario' in open(file).read():
+           write_fasta_file(file_name, standardized_seq, 'StartSite_Strand_Standardized_EndRecovered', sample)
+      elif check_if_trnF_gaa_in_fasta(fas_file) == True and 'Scenario' not in open(file).read():
+           write_fasta_file(file_name, standardized_seq, 'StartSite_Strand_Standardized_NotEndRecovered', sample)
+      elif check_if_trnF_gaa_in_fasta(fas_file) == False and 'Scenario' in open(file).read():
+           write_fasta_file(file_name, standardized_seq, 'Strand_Standardized_EndRecovered', sample)
       else:
-           write_fasta_file(file_name, standardized_seq, 'Strand_Standardized', sample)
+           write_fasta_file(file_name, standardized_seq, 'Strand_Standardized_NotEndRecovered', sample)

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import shlex
 import subprocess
@@ -22,7 +23,7 @@ if pre_sealer_gap - gap_remaining == 1:
 # check the length of the fasta sequence
     for record in SeqIO.parse(pre_sealer_fake_gap, "fasta"):
         flank_size = int((len(str(record.seq))-10)/2)
-        cmd = f"python3 /projects/transabyss/btl/itrack_dna/assemblies/bin/add_flanks.py {fake_gap_filled} {assembly} {flank_size} {output}"
+        cmd = f"add_flanks.py {fake_gap_filled} {assembly} {flank_size} {output}"
         args = shlex.split(cmd)
         subprocess.call(args)
 else:

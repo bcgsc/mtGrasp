@@ -1,57 +1,55 @@
-# MITOAS (Mitochondrial Genome Assembly and Standardization Pipeline)
+# mtGasp (Mitochondrial Genome Assembly and Standardization Pipeline)
 
-# Overview
+
 
 ## Novel mitochondrial genome assembly and standardization pipeline for paired-end short DNA reads
 
 
 
-
-<code> <b>data/</b> </code> : Reference sequences for MitoS annotation and a csv file for standardizing strand orientation
-
-<code> <b>bin/</b> </code> : Python scripts used in the snakemake pipeline
-
-<code> <b>pipeline.smk</b> </code> : Snakemake file
-
-
 # Setup
+1. Clone the repository
 
 ```
-git clone https://github.com/bcgsc/mitogenome_assembly_pipeline.git
+git clone https://github.com/bcgsc/mtGasp.git
 ```
+2. Add the mtGasp directory to your PATH, use the following command to check if it is added correctly
+
+```
+echo $PATH
+```
+
+
+3. Install dependencies
+
 
 
 ``` Dependencies ```
 
-Python 3.9.1
+Python 3.9+
 
-Snakemake 5.30.2
+Snakemake 
 
-Pandas 1.1.5
+Pandas 
 
-Numpy 1.19.4
+Numpy 
 
-BLAST 2.10.1+
+BLAST 
 
-Biopython 1.79
+Biopython 
 
-Bbmap 38.18
+Seqtk 
 
-Seqtk 1.1-r91
+AbySS v2.2.0+
 
-Regex 2022.3.15 
+ABySS-Sealer 
 
-AbySS 3.82
+ntJoin
 
-ABySS-Sealer (ABySS) 2.2.5
+BWA 
 
-ntJoin 3.82
+Samtools 
 
-BWA 0.7.17-r1188
-
-Samtools 1.10
-
-Pilon 1.23
+Pilon 
 
 Mitos 2.0.8
 
@@ -60,7 +58,7 @@ Mitos 2.0.8
 
 ```Special Installation Instructions for MitoS```
 
-***Please note: mitos 2.0.8 uses python 2.7.18, if downloaded to the same environment with the other dependencies, a conflict will occur.***
+***Please note: mitos 2.0.8 uses python 2.7, if downloaded to the same environment with the other dependencies, a conflict will occur.***
 
 Please install mitos in a new environment called "mitos" using the instruction below:
 
@@ -69,90 +67,67 @@ conda install mitos -c bioconda -m -n mitos
 ```
 
 
-# Running MITOAS
+# Running mtGasp
+
+### Required Parameters 
+
+`-o` or `--out_dir`: output folder name ***(full path or relative path)***
+
+`-r1` or `--read1`: compressed fastq.gz file containing the forward reads from paired-end sequencing ***(MUST be full path)***
+
+`-r2` or `--read2`: compressed fastq.gz file containing the reverse reads from paired-end sequencing ***(MUST be full path)***
 
 
-### 1. Set up library folder and softlink paired-end read files
+`-p` or `--ref_path`: path to the fasta file containing reference sequences that will be used to build blast database ***(MUST be full path)***
 
-```Mandatory Directory Structure :```  
-> <library_folder_name>
- >> r1.fq.gz  
- >> r2.fq.gz
+(**Please note**: having more fasta sequences in the database will result in increased runtime and memory usage. The best practice is to have a maximum of one or two sequences that belong to the same species group)
 
-***Note: Paired-end read files must be named "r1.fq.gz" and "r2.fq.gz"***
+`-m` or `--mt_gen`: mitochondrial genetic code (e.g., 2, 5) for your target species
+
+***mito-genetic code can be searched on*** https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
+
+---
+###  Optional Parameters for Advanced Users
+
+`-k` or `--kmer`: k-mer size used in the construction of de bruijn graph for ABySS
+
+`-c` or `--kc`: k-mer minimum coverage multiplicity cutoff for ABySS
+ 
+---
+
+### Other Parameters
+
+`-h` or `--help`: show help message and exit
+
+`-v` or `--version`: show program's version number and exit
+
+`-t` or `--threads`: number of threads to use
+
+`-n` or `--dry_run`: dry run mtGasp
+    
+`-h` or `--help`: show help message and exit
 
 
+***More information on optimizing k and kc for ABySS***: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
+
+---
+### Examples
+
+Dry run mtGasp with default parameters
+
+    
 ```
-mkdir <library_folder_name>
-cd <library_folder_name>
-
-# Softlink Original Read Files to Library Folder
-ln -sfT <target_read_1_fastq.gz> r1.fq.gz
-ln -sfT <target_read_2_fastq.gz> r2.fq.gz
-```
-
-### 2.  Required Parameters for MITOAS
-
-`library`: library folder name 
-
-`k_sweeps`: k-mer sweeps used for ABySS 
-
-`kc`: k-mer minimum coverage multiplicity cutoff for ABySS
-
-`B`: bloom filter size for ABySS
-
-`b`: bloom filter size for abyss-sealer (gap-filling step)
-
-`P`: number of max alternate paths used in abyss-sealer (gap-filling step)
-
-`blastdb_path`: path to the reference data folder for BLAST
-
-`blastdb_name`: name for the reference database
-
-`ref_path`: path to the fasta file containing reference sequences
-
-`bf_end_recovery`: bloom filter size for abyss-sealer (end recovery step)
-
-`P_end_recovery`: number of max alternate paths for abyss-sealer (end recovery step)
-
-`mito_gencode`: csv file that contains the mitochondrial genetic code (e.g., 2, 5) for your target species (see below for the required format)
-
-
-
-mito-genetic code can be searched on https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
-
-More information on optimizing k and kc for ABySS: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
-
-More information on abyss-sealer parameters (b, P, bf_end_recovery, P_end_recovery): https://github.com/bcgsc/abyss/tree/master/Sealer
-
-
-`Required csv file format`
-```
-Scientific Name,Mitochondrial Genetic Code
-Anoplopoma fimbria,2
-Acipenser fulvescens,2
-Sebastes zacentrus,2
-```
-`Build BLAST database using local mitogenome sequences`
-```
-makeblastdb -in <ref_path> -out <blastdb_name> -dbtype nucl -parse_seqids
-```
-`Examples`
-
-Running the pipeline with a single set of parameters
-
-```
-snakemake -s pipeline.smk --config library=sea_otter_libraryID001 k_sweeps=96 kc_sweeps=4 B=30G b=30G P=5 blastdb_path=path/to/blastdb_folder blastdb_name=mito_blastdb ref_path=path/to/fasta bf_end_recovery=30G P_end_recovery=5 mito_gencode=mito_gencode.csv --cores 10
+mtgasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -p /path/to/mito_db/refs.fa -n
 ```
 
+Run mtGasp with default parameters using 4 threads
 
-Running the pipeline for 2 libraries using different k/kc sweeps 
-
 ```
-snakemake -s pipeline.smk --config library=[sea_otter_libraryID001,sea_otter_libraryID002]  k_sweeps=[64, 80, 96] kc_sweeps=[2,3] B=30G b=30G P=5 blastdb_path=path/to/blastdb_folder blastdb_name=mito_blastdb ref_path=path/to/fasta bf_end_recovery=30G P_end_recovery=5 mito_gencode=mito_gencode.csv --cores 10
-```
-If you have a config file, run
-```
-snakemake  -s pipeline.smk --configfile config.yaml --cores 10
+mtgasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -p /path/to/mito_db/refs.fa -t 4
 ```
 
+Run mtGasp with custom k-mer size and k-mer coverage cutoff
+
+```
+mtgasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -p /path/to/mito_db/refs.fa -k 80 -kc 2
+```
