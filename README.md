@@ -126,5 +126,5 @@ mtgasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -p 
 Run mtGasp with custom k-mer size and k-mer coverage cutoff
 
 ```
-mtgasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -p /path/to/mito_db/refs.fa -k 80 -kc 2
+mtgasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -p /path/to/mito_db/refs.fa -k 80 -c 2
 ```
