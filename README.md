@@ -99,13 +99,10 @@ conda install mitos -c bioconda -m -n mitos
 
 `-h` or `--help`: show help message and exit
 
-`-v` or `--version`: show program's version number and exit
-
 `-t` or `--threads`: number of threads to use
 
 `-n` or `--dry_run`: dry run mtGasp
     
-`-h` or `--help`: show help message and exit
 
 
 ***More information on optimizing k and kc for ABySS***: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
