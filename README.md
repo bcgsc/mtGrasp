@@ -25,6 +25,8 @@ echo $PATH
 
 ``` Dependencies ```
 
+Anaconda 
+
 Python 3.9+
 
 Snakemake 
