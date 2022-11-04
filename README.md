@@ -21,44 +21,25 @@ echo $PATH
 
 3. Install dependencies
 
-
-
-``` Dependencies ```
-
-Anaconda 
-
-Python 3.9+
-
-Snakemake 
-
-Pandas 
-
-Numpy 
-
-BLAST 
-
-Biopython 
-
-Seqtk 
-
-AbySS v2.2.0+
-
-ABySS-Sealer 
-
-ntJoin
-
-BWA 
-
-Samtools 
-
-Pilon 
-
-Mitos 2.0.8
+* Anaconda 
+* Python 3.9+
+* Snakemake 
+* Pandas 
+* Numpy 
+* BLAST 
+* Biopython 
+* Seqtk 
+* ABySS v2.2.0+
+* ntJoin
+* BWA 
+* Samtools 
+* Pilon
+* Mitos 2.0.8
 
 
 ---
 
-```Special Installation Instructions for MitoS```
+#### Special Installation Instructions for MitoS
 
 ***Please note: mitos 2.0.8 uses python 2.7, if downloaded to the same environment with the other dependencies, a conflict will occur.***
 
