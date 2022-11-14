@@ -35,7 +35,7 @@ echo $PATH
 * Samtools 
 * Pilon
 * Mitos 2.0.8
-
+* ntCard
 
 ---
 
