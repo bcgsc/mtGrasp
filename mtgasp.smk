@@ -45,7 +45,7 @@ def bf_abyss(r1, r2, output_dir, k):
     new_dir = f'{output_dir}/bloom_filter_calc/abyss'
     # check if a file exists
     if not os.path.exists(new_dir + '/' + f'freq_k{k}.hist'):
-        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -k{k} -t 8 -p freq {r1} {r2}'
+        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -k{k} -p freq {r1} {r2}'
         os.system(cmd)
         return bloom_filter_calc(new_dir + '/' + f'freq_k{k}.hist')
     else:
@@ -57,7 +57,7 @@ def bf_sealer(r1, r2, output_dir):
     new_dir = f'{output_dir}/bloom_filter_calc/sealer'
     # check if a directory exists
     if not os.path.exists(new_dir):
-        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -k60,80,100,120 -t 8 -p freq {r1} {r2}' # k-mer sweeps used in sealer: 60, 80, 100, 120
+        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -k60,80,100,120 -p freq {r1} {r2}' # k-mer sweeps used in sealer: 60, 80, 100, 120
         os.system(cmd)
         kmer = sealer_max_kmer_count(new_dir)
         return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist')
@@ -189,7 +189,6 @@ rule pre_polishing:
       params:
         workdir= current_dir + "{library}/mito_filtering_output",
         out=current_dir + "{library}/sealer/k{k}_kc{kc}.postsealer",
-        select_length=current_dir + "{library}/sealer/k{k}_kc{kc}.scaffold_10000-20000.fa",
         ntjoin_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.1000-20000bp.blast-mt_db.fa.k32.w500.n1.all.scaffolds.fa",
         r1=config['r1'],
         r2=config['r2']
@@ -207,10 +206,10 @@ rule pre_polishing:
           bf = bf_sealer(params.r1, params.r2, wildcards.library)
           count = sum(1 for line in open(input[0]))
           if count <= 2:
-               shell("""awk '!/^>/ {{ next }} {{ getline seq }} length(seq) > 10000 {{ print $0 "\\n" seq }}' {input.target} | awk '!/^>/ {{ next }} {{ getline seq }} length(seq) < 20000 {{ print $0 "\\n" seq }}' > {params.select_length} && abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k 120 -P 5 -o {params.out} -j24 -S {params.select_length} {params.r1} {params.r2} &> {log_sealer}""")
+               shell("""abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k 120 -P 5 -o {params.out} -S {input.target} {params.r1} {params.r2} &> {log_sealer}""")
                print("no ntJoin needed")
           else:
-               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} && awk '!/^>/ {{ next }} {{ getline seq }} length(seq) > 10000 {{ print $0 "\\n" seq }}' {params.ntjoin_out}  | awk '!/^>/ {{ next }} {{ getline seq }} length(seq) < 20000 {{ print $0 "\\n" seq }}' > {params.select_length} && abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k 120 -P 5 -o {params.out} -S {params.select_length}  {params.r1} {params.r2} &> {log_sealer}""")
+               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} && abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k 120 -P 5 -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
                print("ntJoin needed")
 
 
