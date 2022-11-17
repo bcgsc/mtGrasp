@@ -94,19 +94,17 @@ subprocess.call(cmd_shlex)
 #De novo assembly 
 rule de_novo_assembly:
      input:
-        current_dir + "{library}"
+        r1=expand("{read1}", read1=config['r1']),
+        r2=expand("{read2}", read2=config['r2'])
      output:
         current_dir + "{library}/abyss/k{k}_kc{kc}-scaffolds.fa"
      benchmark:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.de_novo_assembly.benchmark.txt"
      log:
         current_dir + "{library}/abyss/k{k}_kc{kc}.log"
-     params:
-        r1=config['r1'],
-        r2=config['r2']
      run:
-        bf = bf_abyss(params.r1, params.r2, wildcards.library, wildcards.k)
-        shell("abyss-pe --directory {input}/abyss v=-v kc={wildcards.kc}  k={wildcards.k}  B={bf}  name=k{wildcards.k}_kc{wildcards.kc} in='{params.r1} {params.r2}' &> {log}")
+        bf = bf_abyss(input.r1, input.r2, wildcards.library, wildcards.k)
+        shell("abyss-pe --directory {wildcards.library}/abyss v=-v kc={wildcards.kc}  k={wildcards.k}  B={bf}  name=k{wildcards.k}_kc{wildcards.kc} in='{input.r1} {input.r2}' &> {log}")
        
 
        
