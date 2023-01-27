@@ -2,6 +2,7 @@ import os.path
 import shlex
 import subprocess
 import math
+from Bio import SeqIO
 
 # check if library starts with a slash (full path) or not (relative path)
 # if not, add current directory to the path
@@ -22,7 +23,7 @@ rule all:
 
 
 # Bloom filter size calculation for abyss-pe
-def bloom_filter_calc(file):
+def bloom_filter_calc(file, FPR):
     with open(file, 'r') as f:
         content = f.readlines()
         # second line: F0
@@ -30,7 +31,7 @@ def bloom_filter_calc(file):
         # third line: number of k-mers that only occurred once
         once = int(content[2].strip().split()[1])
         count = distinct - once # the number of k-mers that occurred more than once
-    bits = math.ceil(-count/math.log(0.998)) # FPR = 0.2%
+    bits = math.ceil(-count/math.log(1-FPR))
     bytes = bits/8
     # convert bytes to B, KB, MB, GB, TB
     power = 10**3
@@ -41,29 +42,29 @@ def bloom_filter_calc(file):
         n += 1
     return str(math.ceil(bytes))+power_labels[n]
 
-def bf_abyss(r1, r2, output_dir, k):
+def bf_abyss(r1, r2, output_dir, k, FPR):
     new_dir = f'{output_dir}/bloom_filter_calc/abyss'
     # check if a file exists
     if not os.path.exists(new_dir + '/' + f'freq_k{k}.hist'):
         cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -k{k} -p freq {r1} {r2}'
         os.system(cmd)
-        return bloom_filter_calc(new_dir + '/' + f'freq_k{k}.hist')
+        return bloom_filter_calc(new_dir + '/' + f'freq_k{k}.hist', FPR)
     else:
-        return bloom_filter_calc(new_dir + '/' + f'freq_k{k}.hist')
+        return bloom_filter_calc(new_dir + '/' + f'freq_k{k}.hist', FPR)
 
 
 # Bloom filter size calculation for abyss-sealer
-def bf_sealer(r1, r2, output_dir):
+def bf_sealer(r1, r2, output_dir, ntcard_threads, FPR,kmers):
     new_dir = f'{output_dir}/bloom_filter_calc/sealer'
     # check if a directory exists
     if not os.path.exists(new_dir):
-        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -k60,80,100,120 -p freq {r1} {r2}' # k-mer sweeps used in sealer: 60, 80, 100, 120
+        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -t {ntcard_threads} -k{kmers} -p freq {r1} {r2}' # k-mer sweeps used in sealer: 60, 80, 100, 120
         os.system(cmd)
         kmer = sealer_max_kmer_count(new_dir)
-        return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist')
+        return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist', FPR)
     else:    
         kmer = sealer_max_kmer_count(new_dir)
-        return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist')
+        return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist',FPR)
 
 def sealer_max_kmer_count(new_dir): 
     count_list = []
@@ -84,6 +85,22 @@ def sealer_max_kmer_count(new_dir):
         # get the max count and the kmer 
     return kmer[count_list.index(max(count_list))]
 
+# check if the fasta file has gaps or not
+def check_gaps(file):
+    gap = 0
+    for rec in SeqIO.parse(file, 'fasta'):
+       seq = str(rec.seq)
+       if len(seq.split('N')) > 1:
+          gap +=1 
+
+
+# convert a input string containing k-mer values (e.g., "60,80,90") to the sealer parsable format (e.g., "-k60 -k80 -k90")
+def k_string_converter(k_string):
+  split_list = k_string.split(',')
+  new_k_string = '-k' + ' -k'.join(split_list)
+  return new_k_string
+
+
 
 out_dir = current_dir + config["out_dir"]
 
@@ -102,9 +119,13 @@ rule de_novo_assembly:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.de_novo_assembly.benchmark.txt"
      log:
         current_dir + "{library}/abyss/k{k}_kc{kc}.log"
+     params:
+        abyss_fpr=config['abyss_fpr'],
+        threads=config['threads']
+     
      run:
-        bf = bf_abyss(input.r1, input.r2, wildcards.library, wildcards.k)
-        shell("abyss-pe --directory {wildcards.library}/abyss v=-v kc={wildcards.kc}  k={wildcards.k}  B={bf}  name=k{wildcards.k}_kc{wildcards.kc} in='{input.r1} {input.r2}' &> {log}")
+        bf = bf_abyss(input.r1, input.r2, wildcards.library, wildcards.k, params.abyss_fpr)
+        shell("abyss-pe --directory {wildcards.library}/abyss v=-v kc={wildcards.kc} j={params.threads}  k={wildcards.k}  B={bf}  name=k{wildcards.k}_kc{wildcards.kc} in='{input.r1} {input.r2}' &> {log}")
        
 
        
@@ -156,8 +177,8 @@ rule create_lists:
      benchmark:
          current_dir + "{library}/benchmark/k{k}_kc{kc}.create_lists.benchmark.txt"
      shell:
-          "extract_tsv_value.py -in {input} -out {output.ref_list} -c ref ; "
-          "extract_tsv_value.py -in {input} -out {output.query_list} -c query"
+          "extract_tsv_value.py {input} {output.ref_list} ref ; "
+          "extract_tsv_value.py {input} {output.query_list} query"
          
 
 rule extract_seq:
@@ -183,32 +204,50 @@ rule pre_polishing:
           target=rules.extract_seq.output.query_out,
           ref=rules.extract_seq.output.ref_out
       output:
-          current_dir + "{library}/sealer/k{k}_kc{kc}.postsealer_scaffold.fa"
+          current_dir + "{library}/prepolishing/k{k}_kc{kc}_scaffold.fa"
       params:
         workdir= current_dir + "{library}/mito_filtering_output",
-        out=current_dir + "{library}/sealer/k{k}_kc{kc}.postsealer",
+        out=current_dir + "{library}/prepolishing/k{k}_kc{kc}",
         ntjoin_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.1000-20000bp.blast-mt_db.fa.k32.w500.n1.all.scaffolds.fa",
         r1=config['r1'],
-        r2=config['r2']
+        r2=config['r2'],
+        sealer_fpr=config['sealer_fpr'],
+        threads=config['threads'],
+        p=config['p'],
+        k=config['sealer_k']
       benchmark:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.pre_polishing.benchmark.txt"
       log:
-        sealer=current_dir + "{library}/sealer/k{k}_kc{kc}_sealer.log",
+        sealer=current_dir + "{library}/prepolishing/k{k}_kc{kc}_sealer.log",
         ntjoin=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}_ntjoin.log"
+      
       run: 
           import os
           target = os.path.basename(input.target)
           ref = os.path.basename(input.ref)
           log_ntjoin = os.path.basename(log.ntjoin)
           log_sealer = log.sealer
-          bf = bf_sealer(params.r1, params.r2, wildcards.library)
+          bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
           count = sum(1 for line in open(input[0]))
-          if count <= 2:
-               shell("""abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k 120 -P 5 -o {params.out} -S {input.target} {params.r1} {params.r2} &> {log_sealer}""")
+          k = k_string_converter(params.k)
+          if check_gaps(input.target) != 0:
+            print("---Start Sealer Gap Filling---")
+            if count <= 2:
+               shell("""abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {input.target} {params.r1} {params.r2} &> {log_sealer}""")
                print("no ntJoin needed")
-          else:
-               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} && abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k 120 -P 5 -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
+            else:
+               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads} && abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
                print("ntJoin needed")
+          else:
+             print("---No Gaps Found, Gap Filling Not Needed---")
+             if count <= 2:
+               shell("cp {input.target} {output}")
+               print("no ntJoin needed")
+             else:
+                shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads} && cp {params.ntjoin_out} {output}""")
+                print("ntJoin needed")
+
+               
 
 
 
@@ -220,12 +259,14 @@ rule bwa_alignment:
         current_dir + "{library}/pilon/k{k}_kc{kc}.sorted.bam"
       params:
         r1=config['r1'],
-        r2=config['r2']
+        r2=config['r2'],
+        threads=config['threads']
       benchmark:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.bwa_alignment.benchmark.txt"
+      
       shell:
         "bwa index {input} && "
-        "bwa mem {input} {params.r1} {params.r2} | samtools view -b -F 4 | samtools sort -o {output} && "
+        "bwa mem {input} {params.r1} {params.r2} -t {params.threads} | samtools view -b -F 4 | samtools sort -o {output} -@ {params.threads} && "
         "samtools index {output}"
 
 rule polishing:
@@ -236,12 +277,19 @@ rule polishing:
         current_dir + "{library}/assembly_output/{library}_k{k}_kc{kc}.postsealer.postpilon.fasta"
       params:
         outdir=current_dir + "{library}/pilon/{library}_k{k}_kc{kc}.postsealer.postpilon",
-        fasta=current_dir + "{library}/pilon/{library}_k{k}_kc{kc}.postsealer.postpilon.fasta"
+        fasta=current_dir + "{library}/pilon/{library}_k{k}_kc{kc}.postsealer.postpilon.fasta",
+        threads=config['threads'],
+        abyss_fpr=config['abyss_fpr'],
+        r1=config['r1'],
+        r2=config['r2']
+
+
       benchmark:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.polishing.benchmark.txt"
-      shell:
-        "pilon --genome {input.in1} --frags {input.in2} --output {params.outdir} --changes --fix all --verbose && "
-        "mv {params.fasta} {output}"
+      
+      run:
+        memory = bf_abyss(params.r1, params.r2, wildcards.library, wildcards.k, params.abyss_fpr)
+        shell("pilon -Xmx{memory} --genome {input.in1} --frags {input.in2} --threads {params.threads} --output {params.outdir} --changes --fix all --verbose && mv {params.fasta} {output}")
 
 # Standardization of strand orientation and start-site
 rule end_recovery:
@@ -252,12 +300,19 @@ rule end_recovery:
        params:
           r1=config['r1'],
           r2=config['r2'],
-          outdir=current_dir + "{library}/end_recovery/{library}_k{k}_kc{kc}"
+          outdir=current_dir + "{library}/end_recovery/{library}_k{k}_kc{kc}",
+          sealer_fpr=config['end_recov_sealer_fpr'],
+          threads=config['threads'],
+          p=config['end_recov_p'],
+          k=config['end_recov_sealer_k']
        benchmark:
           current_dir + "{library}/benchmark/k{k}_kc{kc}.end_recovery.benchmark.txt"
+       
        run:
-          bf = bf_sealer(params.r1, params.r2, wildcards.library)
-          shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir}")
+          
+          bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
+          k = k_string_converter(params.k)
+          shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {k}")
 
 rule standardization:
         input:

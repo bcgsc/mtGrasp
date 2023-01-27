@@ -14,6 +14,7 @@ mito_gencode = sys.argv[2] # mitochondrial genetic code used for gene annotation
 output_dir = sys.argv[3] # output directory for mitos annotation
 sample = sys.argv[4] # unique identifier for the assembly sample (e.g., accession number, species name or library ID number etc.)
 
+
 # get the directory of the script
 string = subprocess.check_output(['which', 'mitos_annotation.py'])
 string = string.decode('utf-8')
@@ -112,6 +113,7 @@ def remove_duplicates_in_a_list(list):
     return list.tolist()
 
 def write_fasta_file(file_name, standardized_seq, standardization_status, sample):
+  
     if len(standardized_seq) > 1:
       for i in range(len(standardized_seq)):
         with open(file_name, 'a') as f:
@@ -119,6 +121,7 @@ def write_fasta_file(file_name, standardized_seq, standardization_status, sample
     else:
       with open(file_name, 'a') as f:
         f.write('>%s_%s_seq\n' % (standardization_status, sample) + standardized_seq[0] + '\n')
+  
       
 
 
@@ -139,7 +142,7 @@ if os.stat(file).st_size == 0:
     with open('%s/post_standardization.fasta'%(output_dir), 'w') as f:
          f.write('')
 
-        
+
     
 # if file is not empty, annotate
 else: 
@@ -154,6 +157,7 @@ else:
         seq_list.append(str(record.seq))     
       # annotate the file
       
+      shell_name = os.environ['SHELL'].split('/')[-1]
 
       cmd2 = f'conda run -n mitos runmitos.py -i {file} -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m'
       cmd_shlex2 = shlex.split(cmd2)
