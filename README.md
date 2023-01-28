@@ -116,7 +116,7 @@ If your target species do not have any reference sequences, you can include scaf
 
 `-n` or `--dry_run`: dry run mtGasp
 
-`-n` or `--unlock`: Remove a lock implemented by snakemake on the working directory
+`-u` or `--unlock`: Remove a lock implemented by snakemake on the working directory
     
 
 
