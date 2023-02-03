@@ -34,14 +34,12 @@ echo $PATH
 * BWA 
 * Samtools 
 * Pilon
-* Mitos 2.0.8
+* Mitos
 * ntCard
 
 ---
 
 #### Special Installation Instructions for MitoS
-
-***Please note: mitos 2.0.8 uses python 2.7, if downloaded to the same environment with the other dependencies, a conflict will occur.***
 
 Please install mitos in a new environment called "mitos" using the instruction below:
 
