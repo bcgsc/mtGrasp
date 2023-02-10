@@ -227,6 +227,7 @@ else:
       
       standardized_seq = remove_duplicates_in_a_list(standardized_seq)
       file_name = '%s/post_standardization.fasta'%(output_dir)
+
       
       if check_if_trnF_gaa_in_fasta(fas_file) == True and 'Scenario' in open(file).read():
            write_fasta_file(file_name, standardized_seq, 'StartSite_Strand_Standardized_EndRecovered', sample)

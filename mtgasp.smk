@@ -318,11 +318,11 @@ rule standardization:
         input:
             rules.end_recovery.output
         output:
-            current_dir + "{library}/standardized_output/{library}_k{k}_kc{kc}/post_standardization.fasta"
+            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/post_standardization.fasta"
         benchmark:
             current_dir + "{library}/benchmark/k{k}_kc{kc}.standardization.benchmark.txt"
         params:
             mito_gencode=config["mt_code"],
-            outdir=current_dir + "{library}/standardized_output/{library}_k{k}_kc{kc}"
+            outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}"
         shell:
             "mitos_annotation.py {input} {params.mito_gencode} {params.outdir} {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}"
