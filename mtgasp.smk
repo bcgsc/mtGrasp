@@ -17,7 +17,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/standardized_output/{library}_k{k}_kc{kc}/post_standardization.fasta", library = config["out_dir"], k = config["k"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/post_standardization.fasta", library = config["out_dir"], k = config["k"], kc = config["kc"])
 
 
 
