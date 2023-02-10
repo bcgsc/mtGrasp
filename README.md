@@ -1,8 +1,9 @@
 # mtGasp (Mitochondrial Genome Assembly and Standardization Pipeline)
-
+<img src="mtGasp_logo.png" width="200" height="200">
 
 
 ## Mitochondrial genome assembly and standardization pipeline for paired-end short DNA reads
+
 
 # Credits
 Concept: Lauren Coombe and Cecilia Yang
