@@ -143,7 +143,7 @@ def find_conda_env(env_name):
 def run_mitos(env_name, file, code, anno_dir, script_dir):
     path_to_env = find_conda_env(env_name)
 
-    cmd = f"conda run -p {path_to_env} runmitos.py -i {file} -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+    cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
     process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
     output = process.communicate()[0].decode("utf-8").strip()
 
