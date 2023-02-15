@@ -10,6 +10,7 @@ import os
 import os.path
 from Bio import SeqIO
 import pandas as pd
+import sys
 
 
 parser = argparse.ArgumentParser()
@@ -44,8 +45,7 @@ def summarize_outputs(input, output, pathlist):
         for line in f:
             if line.startswith(">"):
                 line = line.strip()[1:] #remove >
-                line = line.split("_")[:-4] #exclude values after 4th last underscore
-                headers.append("_".join(line))
+                headers.append(line)
       return ",".join(headers)
 
 
@@ -83,11 +83,11 @@ def summarize_outputs(input, output, pathlist):
 
         
         #summarize assembly outputs
-        directory = "%s/standardized_output"%(line)
+        directory = "%s/final_output"%(line)
         dir_exists=os.path.exists(directory)
         if dir_exists == True:
             for dir in os.listdir(directory):
-                fasta = os.path.abspath("%s/%s/post_standardization.fasta"%(directory,dir))
+                fasta = os.path.abspath("%s/%s/%s.final-mtgasp-assembly.fa"%(directory,dir,dir))
                 file_list.append(fasta)
                 
                 assembly.append(dir)
@@ -113,7 +113,7 @@ def summarize_outputs(input, output, pathlist):
             for item in file_list:
                 f.write("%s\n" % item)
             
-                
+    return 'Summary of assembly outputs and a list of paths to the final mtGasp output fasta files generated successfully! \n They can be found here \n Output tsv summary: %s \n Output file consisting of the full path(s) to the assembly output file(s): %s'%(output,pathlist)
 
 
 if __name__ == '__main__':

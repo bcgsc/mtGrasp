@@ -134,9 +134,12 @@ def find_conda_env(env_name):
         print(f"Conda environment {env_name} found.")
         return match.group(1)
     else:
-        print(f"Conda environment {env_name} not found. Installing Mitos to a conda environment called mitos")
-        subprocess.run(["conda", "install", "mitos", "-c", "bioconda", "-m", "-n", "mitos"])
-        find_conda_env(env_name)
+        # print the error message and exit
+        print(f"Conda environment {env_name} not found.")
+        sys.exit(1)
+
+
+        
 
 
 
@@ -164,7 +167,7 @@ subprocess.call(cmd_shlex1)
 if os.stat(file).st_size == 0:
     print('File is empty, no annotation')
     # write an empty fasta file
-    with open('%s/post_standardization.fasta'%(output_dir), 'w') as f:
+    with open('%s/%s.final-mtgasp-assembly.fa'%(output_dir,sample), 'w') as f:
          f.write('')
 
 
@@ -226,7 +229,7 @@ else:
               
       
       standardized_seq = remove_duplicates_in_a_list(standardized_seq)
-      file_name = '%s/post_standardization.fasta'%(output_dir)
+      file_name = '%s/%s.final-mtgasp-assembly.fa'%(output_dir, sample)
 
       
       if check_if_trnF_gaa_in_fasta(fas_file) == True and 'Scenario' in open(file).read():

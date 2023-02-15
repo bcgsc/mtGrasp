@@ -17,7 +17,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/post_standardization.fasta", library = config["out_dir"], k = config["k"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgasp-assembly.fa", library = config["out_dir"], k = config["k"], kc = config["kc"])
 
 
 
@@ -318,7 +318,7 @@ rule standardization:
         input:
             rules.end_recovery.output
         output:
-            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/post_standardization.fasta"
+            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgasp-assembly.fa"
         benchmark:
             current_dir + "{library}/benchmark/k{k}_kc{kc}.standardization.benchmark.txt"
         params:
