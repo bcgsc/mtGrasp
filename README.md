@@ -16,11 +16,10 @@ Implementation: Cecilia Yang
 ```
 git clone https://github.com/bcgsc/mtGasp.git
 ```
+
 2. Add the mtGasp directory to your PATH, use the following command to check if it is added correctly
 
-```
-echo $PATH
-```
+
 
 
 3. Install dependencies
@@ -54,7 +53,7 @@ conda install mitos -c bioconda -m -n mitos
 ```
 If this does not work or takes too long, you can also install mitos using the following command:
 
-```
+
 
 
 # Running mtGasp
