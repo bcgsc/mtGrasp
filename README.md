@@ -43,7 +43,7 @@ git clone https://github.com/bcgsc/mtGasp.git
 
 ---
 
-#### Special Installation Instructions for MitoS
+#### Special Installation Instructions for Mitos
 
 
 As Mitos uses an older Python version, please install it in a new conda environment called "mitos" using the instructions below:
