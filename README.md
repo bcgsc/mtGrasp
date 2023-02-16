@@ -182,9 +182,9 @@ The mitos annotation results can be found in `<out_dir>/final_output/<out_dir>_k
 ### Clean up mtGasp intermediate files
 
 ```
-cleanup.py <out_dir>
+cleanup.sh <out_dir>
 ```
-Here, this clean-up script will recursively clean up all intermediate files located in the user-specified mtGasp output directory `<out_dir>`. As a result, only the annotation results and the fasta file storing standardized mitochondrial sequence(s) are kept under `./<out_dir>/standardized_output/`. 
+Here, this clean-up bash script will recursively clean up all intermediate files located in the user-specified mtGasp output directory `<out_dir>`. As a result, only the annotation results and the fasta file storing standardized mitochondrial sequence(s) under `<out_dir>/final_output/` and the benchmark output files under `<out_dir>/benchmark/` will be kept in the `<out_dir>` folder.
 
 
 
