@@ -46,12 +46,19 @@ git clone https://github.com/bcgsc/mtGasp.git
 #### Special Installation Instructions for MitoS
 
 
-Please install mitos in a new conda environment called "mitos" using the instruction below:
+As Mitos uses an older Python version, please install it in a new conda environment called "mitos" using the instructions below:
 
 ```
-conda install mitos -c bioconda -m -n mitos
+conda create -n mitos
+conda activate mitos
+conda install python=2.7
+conda install 'r-base>=4' r-ggplot2 r-reshape2 openjdk
+conda install -c conda-forge biopython
+conda install -c bioconda blast=2.9
+conda install -c bioconda hmmer=3.2 infernal=1.1 'viennarna<2'
+conda install -c bioconda mitos=2.0.8
 ```
-If this does not work or takes too long, you can also install mitos using the following command:
+
 
 
 
