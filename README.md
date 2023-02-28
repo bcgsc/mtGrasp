@@ -96,7 +96,7 @@ If your target species do not have any reference sequences, you can include scaf
 ---
 ###  Optional Parameters for Advanced Users 
 
-`-k` or `--kmer=N`: k-mer size used in the construction of de bruijn graph for ABySS [96]
+`-k` or `--kmer=N`: k-mer size used in the construction of de bruijn graph for ABySS [96] (Please note: k-mer size must be less than 128)
 
 `-c` or `--kc=N`: k-mer minimum coverage multiplicity cutoff for ABySS [3]
 
