@@ -163,7 +163,7 @@ rule blast:
 
          # check if a blast database exists
          if not os.path.exists(f'{script_dir}/blast_db/{db_name}'):
-            shell("mkdir -p {script_dir}/blast_db/{db_name} && cd {script_dir}/blast_db/{db_name} && makeblastdb -in {params.ref_fasta} -dbtype nucl -out {db_name} -parse_seqids")
+            shell("mkdir -p {script_dir}/blast_db/{db_name} && cd {script_dir}/blast_db/{db_name} && makeblastdb -in {params.ref_fasta} -dbtype nucl -out {db_name}")
             shell("export BLASTDB={script_dir}/blast_db/{db_name} && blast_best-hit.py {input} {db_name} > {output}")
          else:
             shell("export BLASTDB={script_dir}/blast_db/{db_name} && blast_best-hit.py {input} {db_name} > {output}")
