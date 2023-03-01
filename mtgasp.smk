@@ -135,18 +135,18 @@ rule select_length:
      input:
         rules.de_novo_assembly.output
      output:
-        current_dir + "{library}/blast/k{k}_kc{kc}-scaffolds.1000-20000bp.fa"
+        current_dir + "{library}/blast/k{k}_kc{kc}-scaffolds.fa"
      benchmark:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.select_length.benchmark.txt"
      shell:
-        """awk '!/^>/ {{ next }} {{ getline seq }} length(seq) > 1000 {{ print $0 "\\n" seq }}' {input} | awk '!/^>/ {{ next }} {{ getline seq }} length(seq) < 20000 {{ print $0 "\\n" seq }}' > {output}"""
+        """awk '!/^>/ {{ next }} {{ getline seq }} length(seq) > 1000 {{ print $0 "\\n" seq }}' {input} > {output}"""
 
 
 rule blast:
      input:
          rules.select_length.output
      output:
-         current_dir + "{library}/blast/k{k}_kc{kc}-scaffolds.1000-20000bp.nt.blast.tsv"
+         current_dir + "{library}/blast/k{k}_kc{kc}-scaffolds.nt.blast.tsv"
      benchmark:
          current_dir + "{library}/benchmark/k{k}_kc{kc}.blast.benchmark.txt"
      params:
@@ -187,7 +187,7 @@ rule extract_seq:
          query=rules.create_lists.output.query_list,
          assemblies=rules.select_length.output
      output:
-         query_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.1000-20000bp.blast-mt_db.fa",
+         query_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.blast-mt_db.fa",
          ref_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-ref.fa"
      benchmark:
          current_dir + "{library}/benchmark/k{k}_kc{kc}.extract_seq.benchmark.txt"
@@ -208,7 +208,7 @@ rule pre_polishing:
       params:
         workdir= current_dir + "{library}/mito_filtering_output",
         out=current_dir + "{library}/prepolishing/k{k}_kc{kc}",
-        ntjoin_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.1000-20000bp.blast-mt_db.fa.k32.w500.n1.all.scaffolds.fa",
+        ntjoin_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.blast-mt_db.fa.k32.w100.n1.all.scaffolds.fa",
         r1=config['r1'],
         r2=config['r2'],
         sealer_fpr=config['sealer_fpr'],
