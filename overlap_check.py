@@ -4,7 +4,7 @@ import sys
 from Bio import SeqIO
 usage = """
 Description
-    This script is a modified version of the circle_check.py script from the MitoZ project
+    This script is a modified version of the circle_check.py script from the MitoZ project (Meng et al., 2019)
     Link: https://github.com/linzhi2013/MitoZ/blob/a43e62862dd7d7253ed4ce79b4a3e972ebb75218/version_2.3/useful_scripts/circle_check.py
     Approach:
     - Checking whether the sequences are circular when the sequences have
