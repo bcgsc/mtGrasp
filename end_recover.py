@@ -15,7 +15,9 @@ bf = sys.argv[2]
 r1 = sys.argv[3]
 r2 = sys.argv[4]
 out_dir = sys.argv[5]
-
+threads = sys.argv[6]
+p= sys.argv[7]
+k= sys.argv[8]
 
 
 
@@ -30,7 +32,7 @@ subprocess.call(cmd_shlex)
 
 
 print("Start sealer gap filling")
-cmd = f'abyss-sealer -b{bf} -k 60 -k 80 -k 100 -k120 -P 5 -o {out_dir}/fake_gap_filled -S {out_dir}/fake_gap_unfilled.fa {r1} {r2}'
+cmd = f'abyss-sealer -b{bf} -j {threads} -vv {k} -P {p} -o {out_dir}/fake_gap_filled -S {out_dir}/fake_gap_unfilled.fa {r1} {r2}'
 cmd_shlex = shlex.split(cmd)
 subprocess.call(cmd_shlex)
 

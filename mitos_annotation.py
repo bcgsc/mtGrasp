@@ -7,12 +7,14 @@ import os
 import pandas as pd
 from Bio import SeqIO
 import numpy as np
+import re
 
 
 file = sys.argv[1] # input fasta file
 mito_gencode = sys.argv[2] # mitochondrial genetic code used for gene annotation
 output_dir = sys.argv[3] # output directory for mitos annotation
 sample = sys.argv[4] # unique identifier for the assembly sample (e.g., accession number, species name or library ID number etc.)
+
 
 # get the directory of the script
 string = subprocess.check_output(['which', 'mitos_annotation.py'])
@@ -112,6 +114,7 @@ def remove_duplicates_in_a_list(list):
     return list.tolist()
 
 def write_fasta_file(file_name, standardized_seq, standardization_status, sample):
+  
     if len(standardized_seq) > 1:
       for i in range(len(standardized_seq)):
         with open(file_name, 'a') as f:
@@ -119,7 +122,35 @@ def write_fasta_file(file_name, standardized_seq, standardization_status, sample
     else:
       with open(file_name, 'a') as f:
         f.write('>%s_%s_seq\n' % (standardization_status, sample) + standardized_seq[0] + '\n')
-      
+
+
+
+def find_conda_env(env_name):
+    # Find the environment path using conda info
+    output = subprocess.run(["conda", "info", "--envs"], stdout=subprocess.PIPE, text=True).stdout
+    pattern = fr"\s+(\S+envs/{env_name})$"
+    match = re.search(pattern, output, re.MULTILINE)
+    if match:
+        print(f"Conda environment {env_name} found.")
+        return match.group(1)
+    else:
+        # print the error message and exit
+        print(f"Conda environment {env_name} not found.")
+        sys.exit(1)
+
+
+        
+
+
+
+def run_mitos(env_name, file, code, anno_dir, script_dir):
+    path_to_env = find_conda_env(env_name)
+
+    cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+    process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
+    output = process.communicate()[0].decode("utf-8").strip()
+
+    return output
 
 
 
@@ -136,10 +167,10 @@ subprocess.call(cmd_shlex1)
 if os.stat(file).st_size == 0:
     print('File is empty, no annotation')
     # write an empty fasta file
-    with open('%s/post_standardization.fasta'%(output_dir), 'w') as f:
+    with open('%s/%s.final-mtgasp-assembly.fa'%(output_dir,sample), 'w') as f:
          f.write('')
 
-        
+
     
 # if file is not empty, annotate
 else: 
@@ -154,10 +185,13 @@ else:
         seq_list.append(str(record.seq))     
       # annotate the file
       
-
-      cmd2 = f'conda run -n mitos runmitos.py -i {file} -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m'
-      cmd_shlex2 = shlex.split(cmd2)
-      subprocess.call(cmd_shlex2)
+      shell_name = os.environ['SHELL'].split('/')[-1]
+      
+      try:
+          output = run_mitos("mitos", file, code, anno_dir, script_dir)
+          print(f"Output: {output}")
+      except Exception as e:
+          print(f"Error: {e}")
       
       standardized_seq = []
       if num_seq > 1:
@@ -195,7 +229,8 @@ else:
               
       
       standardized_seq = remove_duplicates_in_a_list(standardized_seq)
-      file_name = '%s/post_standardization.fasta'%(output_dir)
+      file_name = '%s/%s.final-mtgasp-assembly.fa'%(output_dir, sample)
+
       
       if check_if_trnF_gaa_in_fasta(fas_file) == True and 'Scenario' in open(file).read():
            write_fasta_file(file_name, standardized_seq, 'StartSite_Strand_Standardized_EndRecovered', sample)
