@@ -48,6 +48,8 @@ git clone https://github.com/bcgsc/mtGasp.git
 
 As Mitos uses an older Python version, please install it in a new conda environment called "mitos" using the instructions below:
 
+
+
 ```
 conda create -n mitos
 conda activate mitos
