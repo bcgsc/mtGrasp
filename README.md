@@ -118,7 +118,7 @@ If your target species do not have any reference sequences, you can include scaf
 
 `-i` or `--end_recov_p=N`: Merge at most N alternate paths during sealer flanking end recovery; use 'nolimit' for no limit [5]
 
-`-t` or `--threads=N`: number of threads to use [3]
+`-t` or `--threads=N`: number of threads to use [8]
 
 
  

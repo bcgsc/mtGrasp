@@ -10,7 +10,7 @@ parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file', require
 parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file', required=True)
 parser.add_argument('-o', '--out_dir', help='Output directory', required=True)
 parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code', required=True)
-parser.add_argument('-t', '--threads', help='Number of threads [3]', default = 3)
+parser.add_argument('-t', '--threads', help='Number of threads [8]', default = 8)
 parser.add_argument('-k', '--kmer', help='k-mer size used in abyss de novo assembly [96] (Please note: k-mer size must be less than 128)', default = 96)
 parser.add_argument('-c', '--kc', help='kc [3]', default = 3)
 parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file', required=True)
