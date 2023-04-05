@@ -37,7 +37,7 @@ git clone https://github.com/bcgsc/mtGasp.git
 * ntJoin
 * BWA 
 * Samtools 
-* Pilon 
+* Pilon v1.24+
 * Mitos
 * ntCard
 
@@ -98,11 +98,16 @@ If your target species do not have any reference sequences, you can include scaf
 ---
 ###  Optional Parameters for Advanced Users 
 
-`-k` or `--kmer=N`: k-mer size used in the construction of de bruijn graph for ABySS [96] (Please note: k-mer size must be less than 128)
+`-k` or `--kmer=N`: k-mer size used in the construction of de bruijn graph for ABySS [91] (Please note: k-mer size must be less than 128)
 
 `-c` or `--kc=N`: k-mer minimum coverage multiplicity cutoff for ABySS [3]
 
-***More information on optimizing k and kc for ABySS***: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
+***More information on optimizing -k and -c for ABySS***: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
+
+`-sub` or `--subsample=N`:Subsample N read pairs from two paired FASTQ files  [2000000] 
+
+`-nsub` or `--nosubsample`: Run mtGasp using the entire read dataset without subsampling [False]
+
 
 `-a` or `--abyss_fpr=N`: False positive rate for the bloom filter used by abyss during the assembly step [0.005]
 
@@ -119,6 +124,8 @@ If your target species do not have any reference sequences, you can include scaf
 `-i` or `--end_recov_p=N`: Merge at most N alternate paths during sealer flanking end recovery; use 'nolimit' for no limit [5]
 
 `-t` or `--threads=N`: number of threads to use [8]
+
+`-ma` or `--mismatch_allowed=N`: Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]
 
 
  
@@ -213,7 +220,11 @@ Here, this script will summarize the mtGasp results for all assembly output fold
 Finally, `<Output text file>` will contain the full path(s) to the assembly output fasta file(s)
 
 ---
-### How to fine-tune mtGasp parameters
+### Standardize your own mitochondrial sequence(s) using mtGasp
+If you have your own mitochondrial sequence(s) and would like to standardize it/them using mtGasp, you can do so by using mtGasp's `mtgasp_standardize.py` script. 
+
+For usage, please run `mtgasp_standardize.py -h` for help.
+
 
 
 

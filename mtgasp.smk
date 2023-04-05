@@ -56,15 +56,14 @@ def bf_abyss(r1, r2, output_dir, k, FPR):
 # Bloom filter size calculation for abyss-sealer
 def bf_sealer(r1, r2, output_dir, ntcard_threads, FPR,kmers):
     new_dir = f'{output_dir}/bloom_filter_calc/sealer'
-    # check if a directory exists
-    if not os.path.exists(new_dir):
-        cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -t {ntcard_threads} -k{kmers} -p freq {r1} {r2}' # k-mer sweeps used in sealer: 60, 80, 100, 120
-        os.system(cmd)
-        kmer = sealer_max_kmer_count(new_dir)
-        return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist', FPR)
-    else:    
-        kmer = sealer_max_kmer_count(new_dir)
-        return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist',FPR)
+    for k in kmers.split(','):
+       hist_file = f'{new_dir}/freq_k{k}.hist'
+       if not os.path.exists(hist_file):
+            cmd = f'mkdir -p {new_dir} && cd {new_dir} && ntcard -t {ntcard_threads} -k{kmers} -p freq {r1} {r2}' 
+            os.system(cmd)
+    kmer = sealer_max_kmer_count(new_dir)
+    return bloom_filter_calc(f'{new_dir}/freq_{kmer}.hist', FPR)
+
 
 def sealer_max_kmer_count(new_dir): 
     count_list = []
@@ -92,6 +91,7 @@ def check_gaps(file):
        seq = str(rec.seq)
        if len(seq.split('N')) > 1:
           gap +=1 
+    return gap
 
 
 # convert a input string containing k-mer values (e.g., "60,80,90") to the sealer parsable format (e.g., "-k60 -k80 -k90")
@@ -288,8 +288,7 @@ rule polishing:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.polishing.benchmark.txt"
       
       run:
-        memory = bf_abyss(params.r1, params.r2, wildcards.library, wildcards.k, params.abyss_fpr)
-        shell("pilon -Xmx{memory} --genome {input.in1} --frags {input.in2} --threads {params.threads} --output {params.outdir} --changes --fix all --verbose && mv {params.fasta} {output}")
+        shell("pilon -Xmx200g --genome {input.in1} --frags {input.in2} --threads {params.threads} --output {params.outdir} --changes --fix all --verbose && mv {params.fasta} {output}")
 
 # Standardization of strand orientation and start-site
 rule end_recovery:
@@ -304,7 +303,9 @@ rule end_recovery:
           sealer_fpr=config['end_recov_sealer_fpr'],
           threads=config['threads'],
           p=config['end_recov_p'],
-          k=config['end_recov_sealer_k']
+          k=config['end_recov_sealer_k'],
+          mismatch_allowed=config['mismatch_allowed']
+
        benchmark:
           current_dir + "{library}/benchmark/k{k}_kc{kc}.end_recovery.benchmark.txt"
        
@@ -312,7 +313,7 @@ rule end_recovery:
           
           bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
           k = k_string_converter(params.k)
-          shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {k}")
+          shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {params.mismatch_allowed} {k}")
 
 rule standardization:
         input:
@@ -325,4 +326,4 @@ rule standardization:
             mito_gencode=config["mt_code"],
             outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}"
         shell:
-            "mitos_annotation.py {input} {params.mito_gencode} {params.outdir} {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}"
+            "mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}"
