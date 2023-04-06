@@ -119,11 +119,12 @@ if tmp == 1:
     print(outline, file=fh_out)
     fh_out.close()
 
+
     
 start_pos = match_start_pos
 stop_pos = match_start_pos + overlap_len
 subseq_3 = seq[start_pos:stop_pos]
-if seqlen >= 12000 and seq_distance(subseq_5, subseq_3) < mismatch_allowed or seq_distance(subseq_5, subseq_3) == mismatch_allowed:
+if seqlen >= 12000 and start_pos !=0 and seq_distance(subseq_5, subseq_3) < mismatch_allowed or seq_distance(subseq_5, subseq_3) == mismatch_allowed :
         print("Overlap found ( %s bp to %s bp )" % (start_pos + 1, stop_pos + 1))
         
         end_seq = seq[start_pos:]
