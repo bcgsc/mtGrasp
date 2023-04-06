@@ -83,11 +83,13 @@ conda install -c bioconda mitos=2.0.8
 
 ***How to select sequences for the customized database?***
 
-When reference sequences are available, you can simply store them in the fasta file you intend to use for blast database construction. 
+If the reference sequences of the species whose mitogenomes you plan to assemble are available, you can conveniently add them to the fasta file that will later be used by mtGasp to construct the mitochondrial sequence filtering database.
 
-If your target species do not have any reference sequences, you can include scaffolds or reference sequences of closely related species (i.e. the target species and references belong to the same kingdom or phylum) in your fasta file for database construction. 
+In case reference sequences are not accessible for your target species, you can consider incorporating scaffolds or reference sequences from closely related species. The ideal scenario would be if both the target and reference species are from the same family or genus, as this would improve the quality of the mitochondrial database by improving the probability of matching the assembled mitochondrial sequence with your mitogenome database. 
 
-(**Please note**: having more fasta sequences in the database will result in increased runtime and memory usage. The best practice is to have a maximum of one or two sequences belonging to the same species group (i.e. try to avoid duplicates of the same species))
+However, if such sequences are unavailable, you can move up the taxonomic hierarchy until you find a suitable sequence. Additionally, it is worth trying different sequences as altering the sequences in the database does not impact the final quality of the assembly process, it simply increases the likelihood of successful mitochondrial sequence searching in cases where they are successfully assembled.
+
+(**Please note**: Having more fasta sequences in the database will result in increased runtime and memory usage. The best practice is to have a maximum of one or two sequences belonging to the same species group (i.e. try to avoid duplicates of the same species))
 ---
 
 
