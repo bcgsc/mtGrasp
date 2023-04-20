@@ -14,12 +14,14 @@ parser.add_argument('-i', '--input', help='Input fasta file containing your mito
 parser.add_argument('-o', '--output', help='Output directory', required=True)
 parser.add_argument('-p', '--prefix', help='Prefix for the output file', default='mtgasp_standardized')
 parser.add_argument('-c', '--gencode', help='Mitochondrial genetic code used for gene annotation', required=True)
+parser.add_argument('-a', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
 
 args = parser.parse_args()
 file = args.input
 mito_gencode = args.gencode
 output_dir = args.output
 sample = args.prefix
+annotate = args.annotate
 
 
 # get the directory of the script
@@ -149,10 +151,10 @@ def find_conda_env(env_name):
 
 
 
-def run_mitos(env_name, file, code, anno_dir, script_dir):
+def run_mitos(env_name, file, code, dir, script_dir):
     path_to_env = find_conda_env(env_name)
 
-    cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {anno_dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+    cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
     process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
     output = process.communicate()[0].decode("utf-8").strip()
 
@@ -163,7 +165,7 @@ def run_mitos(env_name, file, code, anno_dir, script_dir):
 print('Annotating file: %s' % (file))
     
 # make a new directory for the annotation of each assembly
-anno_dir = output_dir
+anno_dir = f'{output_dir}/annotations'
 cmd1 = f'mkdir -p {anno_dir}' 
 cmd_shlex1 = shlex.split(cmd1)
 subprocess.call(cmd_shlex1)
@@ -205,6 +207,7 @@ else:
             fas_file = '%s/%s/result.fas'%(anno_dir, i)
 
             if check_if_trnF_gaa_in_fasta(fas_file) == True:
+              print('tRNA-Phe Gene Found!')
               start_pos, end_pos = find_trnF_gaa_pos(fas_file)
               if trnF_strand_check(fas_file) == 'forward':
                   standardized_seq.append(forward_strand_start_site_standardization(seq_list[i], start_pos))
@@ -212,14 +215,22 @@ else:
                   standardized_seq.append(reverse_complement(reverse_strand_start_site_standardization(seq_list[i], end_pos)))
         
             else:
-              if non_trnF_strand_check(fas_file) == 'forward':
-                   standardized_seq.append(seq_list[i])
+              print('tRNA-Phe Gene Not Found!')
+              if 'Scenario' in open(file).read(): 
+                  if non_trnF_strand_check(fas_file) == 'forward':
+                    standardized_seq.append(seq_list[0])
+                  else:
+                    standardized_seq.append(reverse_complement(seq_list[0]))
               else:
+                if non_trnF_strand_check(fas_file) == 'forward':
+                   standardized_seq.append(seq_list[i])
+                else:
                    standardized_seq.append(reverse_complement(seq_list[i]))
       
       else:
           fas_file = '%s/result.fas'%(anno_dir)
           if check_if_trnF_gaa_in_fasta(fas_file) == True:
+              print('tRNA-Phe Gene Found!')
               start_pos, end_pos = find_trnF_gaa_pos(fas_file)
               if trnF_strand_check(fas_file) == 'forward':
                   standardized_seq.append(forward_strand_start_site_standardization(seq_list[0], start_pos))
@@ -228,6 +239,7 @@ else:
               
               
           else:
+              print('tRNA-Phe Gene Not Found!')
               if non_trnF_strand_check(fas_file) == True:
                    standardized_seq.append(seq_list[0])
               else:
@@ -246,3 +258,23 @@ else:
            write_fasta_file(file_name, standardized_seq, 'Strand_Standardized_Circular', sample)
       else:
            write_fasta_file(file_name, standardized_seq, 'Strand_Standardized_Linear', sample)
+# Remove MitoS annotation intermediate files
+cmd1 = f'rm -r {output_dir}/annotations'
+cmd_shlex1 = shlex.split(cmd1)
+subprocess.call(cmd_shlex1)
+
+# Run MitoS annotation on the final assembly fasta file if '-a' argument is provided
+if annotate:
+      print('Start Annotating %s/%s.final-mtgasp-assembly.fa'%(output_dir, sample))
+      if not os.path.exists(f'{output_dir}/annotation_output'):
+         cmd1 = f'mkdir -p {output_dir}/annotation_output' 
+         cmd_shlex1 = shlex.split(cmd1)
+         subprocess.call(cmd_shlex1)
+      
+      shell_name = os.environ['SHELL'].split('/')[-1]
+      
+      try:
+          output = run_mitos("mitos", '%s/%s.final-mtgasp-assembly.fa'%(output_dir, sample), mito_gencode,f'{output_dir}/annotation_output', script_dir)
+          print(f"Output: {output}")
+      except Exception as e:
+          print(f"Error: {e}")

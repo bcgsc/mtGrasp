@@ -100,7 +100,18 @@ def k_string_converter(k_string):
   new_k_string = '-k' + ' -k'.join(split_list)
   return new_k_string
 
-
+def check_blast_tsv(filename):
+    try:
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+            if len(lines) == 1:
+                print("No mitochondrial sequence found.")
+                exit(0)
+            else:
+                print("Mitochondrial sequence(s) found")
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+        exit(1)
 
 out_dir = current_dir + config["out_dir"]
 
@@ -167,7 +178,8 @@ rule blast:
             shell("export BLASTDB={script_dir}/blast_db/{db_name} && blast_best-hit.py {input} {db_name} > {output}")
          else:
             shell("export BLASTDB={script_dir}/blast_db/{db_name} && blast_best-hit.py {input} {db_name} > {output}")
-
+         check_blast_tsv(f'{output}')
+         
 rule create_lists:
      input:
          rules.blast.output
@@ -324,6 +336,7 @@ rule standardization:
             current_dir + "{library}/benchmark/k{k}_kc{kc}.standardization.benchmark.txt"
         params:
             mito_gencode=config["mt_code"],
-            outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}"
+            outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}",
+            annotate=config["annotate"]
         shell:
-            "mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}"
+            "mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} {params.annotate}"
