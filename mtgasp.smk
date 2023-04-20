@@ -338,5 +338,9 @@ rule standardization:
             mito_gencode=config["mt_code"],
             outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}",
             annotate=config["annotate"]
-        shell:
-            "mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} {params.annotate}"
+        run:
+            if params.annotate=='No':
+              shell("mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}")
+            else:
+               shell("mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} -a")
+        
