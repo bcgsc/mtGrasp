@@ -35,11 +35,7 @@ else
     seqtk sample -s100 ${r1} ${subsample} | gzip > ${out_dir}/subsets/${read1_base}_${subsample}.fastq.gz &
     seqtk sample -s100 ${r2} ${subsample} | gzip > ${out_dir}/subsets/${read2_base}_${subsample}.fastq.gz &
     wait
-fi
-
-snakemake -s ${script_dir}/mtgasp.smk --cores ${threads} -p -k \
+fi && snakemake -s ${script_dir}/mtgasp.smk --cores ${threads} -p -k \
 --config r1=${current_dir}${out_dir}/subsets/${read1_base}_${subsample}.fastq.gz r2=${current_dir}${out_dir}/subsets/${read2_base}_${subsample}.fastq.gz out_dir=${out_dir} mt_code=${mt_gen} k=${kmer} kc=${kc} ref_path=${ref_path} threads=${threads} \
 abyss_fpr=${abyss_fpr} sealer_fpr=${sealer_fpr} p=${p} sealer_k=${sealer_k} end_recov_sealer_fpr=${end_recov_sealer_fpr} \
-end_recov_p=${end_recov_p} end_recov_sealer_k=${end_recov_sealer_k} mismatch_allowed=${mismatch_allowed} annotate=${annotate}
-
-rm ${out_dir}/subsets/*${subsample}.fastq.gz
+end_recov_p=${end_recov_p} end_recov_sealer_k=${end_recov_sealer_k} mismatch_allowed=${mismatch_allowed} annotate=${annotate} && rm ${out_dir}/subsets/*${subsample}.fastq.gz
