@@ -150,7 +150,7 @@ rule select_length:
      benchmark:
         current_dir + "{library}/benchmark/k{k}_kc{kc}.select_length.benchmark.txt"
      shell:
-        """awk '!/^>/ {{ next }} {{ getline seq }} length(seq) > 1000 {{ print $0 "\\n" seq }}' {input} > {output}"""
+        """awk '!/^>/ {{ next }} {{ getline seq }} length(seq) >= 1000 && length(seq) <= 20000 {{ print $0 "\\n" seq }}' {input} > {output}"""
 
 
 rule blast:
