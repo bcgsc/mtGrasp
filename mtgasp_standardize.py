@@ -202,30 +202,49 @@ else:
           print(f"Error: {e}")
       
       standardized_seq = []
-      if num_seq > 1:
+      if num_seq > 1 and 'Scenario' not in open(file).read():
          for i in range(num_seq):
             fas_file = '%s/%s/result.fas'%(anno_dir, i)
-
+         
             if check_if_trnF_gaa_in_fasta(fas_file) == True:
               print('tRNA-Phe Gene Found!')
               start_pos, end_pos = find_trnF_gaa_pos(fas_file)
               if trnF_strand_check(fas_file) == 'forward':
-                  standardized_seq.append(forward_strand_start_site_standardization(seq_list[i], start_pos))
+                   standardized_seq.append(forward_strand_start_site_standardization(seq_list[i], start_pos))
               else:
-                  standardized_seq.append(reverse_complement(reverse_strand_start_site_standardization(seq_list[i], end_pos)))
+                   standardized_seq.append(reverse_complement(reverse_strand_start_site_standardization(seq_list[i], end_pos)))
         
             else:
               print('tRNA-Phe Gene Not Found!')
-              if 'Scenario' in open(file).read(): 
-                  if non_trnF_strand_check(fas_file) == 'forward':
-                    standardized_seq.append(seq_list[0])
-                  else:
-                    standardized_seq.append(reverse_complement(seq_list[0]))
-              else:
-                if non_trnF_strand_check(fas_file) == 'forward':
+              if non_trnF_strand_check(fas_file) == 'forward':
                    standardized_seq.append(seq_list[i])
-                else:
+              else:
                    standardized_seq.append(reverse_complement(seq_list[i]))
+      elif num_seq > 1 and 'Scenario' in open(file).read():
+            trnF_seq_length = 0
+            for i in range(num_seq):
+                fas_file = '%s/%s/result.fas'%(anno_dir, i)
+         
+                if check_if_trnF_gaa_in_fasta(fas_file) == True:
+                   print('tRNA-Phe Gene Found!')
+                   start_pos, end_pos = find_trnF_gaa_pos(fas_file)
+                   if end_pos - start_pos > trnF_seq_length:
+                      trnF_seq_length = end_pos - start_pos
+                      seq_index = i
+                      start_trna = start_pos
+                      end_trna = end_pos
+                else:
+                    print('tRNA-Phe Gene Not Found!')
+                    if non_trnF_strand_check(fas_file) == 'forward':
+                       standardized_seq.append(seq_list[0])
+                    else:
+                       standardized_seq.append(reverse_complement(seq_list[0]))
+            if trnF_seq_length != 0:
+               if trnF_strand_check(fas_file) == 'forward':
+                   standardized_seq.append(forward_strand_start_site_standardization(seq_list[seq_index], start_trna))
+               else:
+                   standardized_seq.append(reverse_complement(reverse_strand_start_site_standardization(seq_list[seq_index], end_trna)))
+
       
       else:
           fas_file = '%s/result.fas'%(anno_dir)
