@@ -326,7 +326,7 @@ rule end_recovery:
        run:
           # check if the input file only contains one fasta sequence
           # coun the number of lines starting with '>'
-          seq_count = sum(1 for line in open(input) if line.startswith('>'))
+          seq_count = sum(1 for line in open(input[0]) if line.startswith('>'))
           if seq_count > 1:
               # no need to end recover, just copy the input file to the output file
               shell("cp {input} {output}")
