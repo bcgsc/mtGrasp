@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-# Wrapper script for mtGasp
+# Wrapper script for mtGrasp
 import argparse
 import subprocess
 import shlex
 
-parser = argparse.ArgumentParser(description='Usage of mtGasp')
+parser = argparse.ArgumentParser(description='Usage of mtGrasp')
 parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file', required=True)
 parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file', required=True)
 parser.add_argument('-o', '--out_dir', help='Output directory', required=True)
@@ -25,9 +25,9 @@ parser.add_argument('-i', '--end_recov_p', help='Merge at most N alternate paths
 parser.add_argument('-u', '--unlock', help='Remove a lock implemented by snakemake on the working directory', action='store_true')
 parser.add_argument('-ma', '--mismatch_allowed', help='Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]', default = 1)
 parser.add_argument('-sub', '--subsample', help='Subsample N read pairs from two paired FASTQ files [2000000]', default = 2000000)
-parser.add_argument('-nsub', '--nosubsample', help='Run mtGasp using the entire read dataset without subsampling [False]', action='store_true')
+parser.add_argument('-nsub', '--nosubsample', help='Run mtGrasp using the entire read dataset without subsampling [False]', action='store_true')
 parser.add_argument('-an', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
-parser.add_argument('-d', '--delete', help='Delete intermediate subdirectories/files once mtGasp reaches completion [False]', action='store_true')
+parser.add_argument('-d', '--delete', help='Delete intermediate subdirectories/files once mtGrasp reaches completion [False]', action='store_true')
 
 
 
@@ -57,8 +57,8 @@ delete =args.delete
 
 
 
-# get the directory of the mtgasp.smk script
-string = subprocess.check_output(['which', 'mtgasp.smk'])
+# get the directory of the mtgrasp.smk script
+string = subprocess.check_output(['which', 'mtgrasp.smk'])
 string = string.decode('utf-8')
 # remove new line character
 string = string.strip()
@@ -70,34 +70,34 @@ read1_base = r1.split('/')[-1].split('.')[0]
 read2_base = r2.split('/')[-1].split('.')[0]
 
 if dry_run:
-    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgasp.smk -np --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='N/A' "))
+    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk -np --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='N/A' "))
 elif unlock:
-    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgasp.smk --unlock --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='N/A' "))
+    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --unlock --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='N/A' "))
 # if subsample is specified, run the pipeline on the subsampled reads
 elif nosubsample and annotate == True:
     print('Subsampling skipped')
-# Run mtgasp.smk on the entire read dataset without subsampling
-    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgasp.smk --cores {threads} -p -k --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='Yes' "))
+# Run mtgrasp.smk on the entire read dataset without subsampling
+    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --cores {threads} -p -k --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='Yes' "))
 elif nosubsample and annotate == False:
     print('Subsampling skipped')
-# Run mtgasp.smk on the entire read dataset without subsampling
-    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgasp.smk --cores {threads} -p -k --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='No' "))
+# Run mtgrasp.smk on the entire read dataset without subsampling
+    subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --cores {threads} -p -k --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='No' "))
 elif nosubsample == False and annotate == True:
-# By default, run mtgasp.smk on the subsampled reads
+# By default, run mtgrasp.smk on the subsampled reads
     print('Start subsampling reads')
-    subprocess.run(shlex.split(f"sub_then_run_mtgasp.sh {out_dir} {r1} {r2} {subsample} \
+    subprocess.run(shlex.split(f"sub_then_run_mtgrasp.sh {out_dir} {r1} {r2} {subsample} \
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'Yes' "))
 elif nosubsample == False and annotate == False:
-# By default, run mtgasp.smk on the subsampled reads
+# By default, run mtgrasp.smk on the subsampled reads
     print('Start subsampling reads')
-    subprocess.run(shlex.split(f"sub_then_run_mtgasp.sh {out_dir} {r1} {r2} {subsample} \
+    subprocess.run(shlex.split(f"sub_then_run_mtgrasp.sh {out_dir} {r1} {r2} {subsample} \
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'No' "))
 else:
-    print('Please double check mtGasp usage information')
+    print('Please double check mtGrasp usage information')
     exit(1)
 
 

@@ -1,3 +1,5 @@
+# Snakemake file for mtGrasp pipeline
+
 import os.path
 import shlex
 import subprocess
@@ -17,7 +19,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgasp-assembly.fa", library = config["out_dir"], k = config["k"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp-assembly.fa", library = config["out_dir"], k = config["k"], kc = config["kc"])
 
 
 
@@ -164,7 +166,7 @@ rule blast:
          ref_fasta=config["ref_path"]
      run:
          # get the directory of the script
-         string = subprocess.check_output(['which', 'mtgasp.smk'])
+         string = subprocess.check_output(['which', 'mtgrasp.smk'])
          string = string.decode('utf-8')
          # remove new line character
          string = string.strip()
@@ -322,16 +324,26 @@ rule end_recovery:
           current_dir + "{library}/benchmark/k{k}_kc{kc}.end_recovery.benchmark.txt"
        
        run:
-          
-          bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
-          k = k_string_converter(params.k)
-          shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {params.mismatch_allowed} {k}")
+          # check if the input file only contains one fasta sequence
+          # coun the number of lines starting with '>'
+          seq_count = sum(1 for line in open(input[0]) if line.startswith('>'))
+          if seq_count > 1:
+              # no need to end recover, just copy the input file to the output file
+              shell("cp {input} {output}")
+          elif seq_count == 1:  
+              # end recover
+              bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
+              k = k_string_converter(params.k)
+              shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {params.mismatch_allowed} {k}")
+          else:
+                print("Error: input file is empty.")
+                exit(1)
 
 rule standardization:
         input:
             rules.end_recovery.output
         output:
-            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgasp-assembly.fa"
+            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp-assembly.fa"
         benchmark:
             current_dir + "{library}/benchmark/k{k}_kc{kc}.standardization.benchmark.txt"
         params:
@@ -340,7 +352,7 @@ rule standardization:
             annotate=config["annotate"]
         run:
             if params.annotate=='No':
-              shell("mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}")
+              shell("mtgrasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}")
             else:
-               shell("mtgasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} -a")
+               shell("mtgrasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} -a")
         
