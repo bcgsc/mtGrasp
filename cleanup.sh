@@ -1,5 +1,12 @@
 #!/bin/bash
+
 set -eu -o pipefail
+
+
+#This script is used to clean up the output directories of mtgrasp. 
+#It is called by the snakemake pipeline after the pipeline has finished running if the --delete flag is set.
+
+
 
 
 if [ "$#" -ne 1 ]; then

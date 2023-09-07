@@ -87,7 +87,7 @@ def summarize_outputs(input, output, pathlist):
         dir_exists=os.path.exists(directory)
         if dir_exists == True:
             for dir in os.listdir(directory):
-                fasta = os.path.abspath("%s/%s/%s.final-mtgasp-assembly.fa"%(directory,dir,dir))
+                fasta = os.path.abspath("%s/%s/%s.final-mtgrasp-assembly.fa"%(directory,dir,dir))
                 file_list.append(fasta)
                 
                 assembly.append(dir)
@@ -113,7 +113,7 @@ def summarize_outputs(input, output, pathlist):
             for item in file_list:
                 f.write("%s\n" % item)
             
-    return 'Summary of assembly outputs and a list of paths to the final mtGasp output fasta files generated successfully! \n They can be found here \n Output tsv summary: %s \n Output file consisting of the full path(s) to the assembly output file(s): %s'%(output,pathlist)
+    return 'Summary of assembly outputs and a list of paths to the final mtGrasp output fasta files generated successfully! \n They can be found here \n Output tsv summary: %s \n Output file consisting of the full path(s) to the assembly output file(s): %s'%(output,pathlist)
 
 
 if __name__ == '__main__':

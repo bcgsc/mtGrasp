@@ -72,11 +72,10 @@ def create_fake_fastq_read(seq, end):
 
 
 
-# find the longest sequence in the assembly for overlap check and end recovery
 rec_list = []
 for rec in SeqIO.parse(assembly, 'fasta'):
     rec_list.append(str(rec.seq))
-seq = max(rec_list, key=len)
+seq = rec_list[0]
 seqlen = len(seq)
 if seqlen < 12000:
     print("Assembly sequence is below 12kbp. No need to perform overlap check")
