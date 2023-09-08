@@ -198,7 +198,7 @@ If you are not interested in the standardized mitogenome sequence(s) or Mitos an
 ### Summarize mtGrasp results
 
 ```
-summarize.py -i <Input text file> -t <Output tsv file> -l <Output text file>
+mtgrasp_summarize.py -i <Input text file> -t <Output tsv file> -l <Output text file>
 ```
 Here, this script will summarize the mtGrasp results for all assembly output folders listed in the input text file `<Input text file>`. The output tsv file `<Output tsv file>` will contain the following columns:
 
@@ -255,7 +255,7 @@ The nucleotide sequences of the annotated genes can be found in `<out_dir>/annot
 
 The order of the annotated genes can be found in `<out_dir>/annotation_output/result.geneorder`.
 
-Because mtGrasp annotation uses a third-party tool called [MITOS](Mitochondrial), any inquires regarding the annotation results should be directed to the [MITOS developers](https://gitlab.com/Bernt/MITOS).
+Because mtGrasp annotation uses a third-party tool called [MITOS](https://www.sciencedirect.com/science/article/abs/pii/S1055790312003326), any inquires regarding the annotation results should be directed to the [MITOS developers](https://gitlab.com/Bernt/MITOS).
 
 ***Please note***: 
 - Currently, mtGrasp only supports standardizing animal mitochondrial sequences.
