@@ -93,9 +93,9 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 ---
 
 
-`-m` or `--mt_gen=N`: mitochondrial genetic code (e.g., 2, 5) for your target species [Required]
+`-m` or `--mt_gen=N`: mitochondrial translation table code (e.g., 2, 5, 13) for your target species [Required]
 
-***mito-genetic code can be searched on*** https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
+***Mitochondrial translation table code can be searched on*** https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
 
 ---
 ###  Optional Parameters for Advanced Users 
@@ -106,7 +106,7 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 ***More information on optimizing -k and -c for ABySS***: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
 
-`-sub` or `--subsample=N`:Subsample N read pairs from two paired FASTQ files  [2000000] 
+`-sub` or `--subsample=N`: Subsample N read pairs from two paired FASTQ files  [2000000] 
 
 `-nsub` or `--nosubsample`: Run mtGrasp using the entire read dataset without subsampling [False]
 
@@ -221,7 +221,47 @@ Finally, `<Output text file>` will contain the full path(s) to the assembly outp
 ### Standardize your own mitochondrial sequence(s) using mtGrasp
 If you have your own mitochondrial sequence(s) and would like to standardize it/them using mtGrasp, you can do so by using mtGrasp's `mtgrasp_standardize.py` script. 
 
-For usage, please run `mtgrasp_standardize.py -h` for help.
+For usage, please run `mtgrasp_standardize.py -h` for help:
+
+`-i` or `--input=FILE`: input fasta file containing the mitochondrial sequence(s) to be standardized [Required]
+
+`-o` or `--out_dir=DIR`: output folder name [Required]
+
+`-c` or `--gencode=N`: mitochondrial translation table code (e.g., 2, 5, 13) for your target species [Required]
+
+***Mitochondrial translation table code can be searched on*** https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
+
+`-p` or `--prefix=STRING`: prefix name for the output files [mtgrasp_standardized]
+
+`-a` or `--annotate`: Run gene annotation on the final assembly output [False]
+
+
+
+
+Example:
+
+```
+mtgrasp_standardize.py -i /path/to/your/mito_seq.fa -o /path/to/output_dir -c 2 -p prefix_name -a
+```
+
+The final output file containing the standardized mitochondrial sequence(s) can be found in `<out_dir>/<prefix_name>.final-mtgrasp-assembly.fa`
+
+
+If the `-a` or `--annotate` argument is provided, mtGrasp will run gene annotation for the final assembly output and the annotation results can be found in `<out_dir>/annotation_output`.
+
+The amino acid sequences of the annotated genes can be found in `<out_dir>/annotation_output/result.faa`.
+
+The nucleotide sequences of the annotated genes can be found in `<out_dir>/annotation_output/result.fas`.
+
+The order of the annotated genes can be found in `<out_dir>/annotation_output/result.geneorder`.
+
+Because mtGrasp annotation uses a third-party tool called [MITOS](Mitochondrial), any inquires regarding the annotation results should be directed to the [MITOS developers](https://gitlab.com/Bernt/MITOS).
+
+***Please note***: 
+- Currently, mtGrasp only supports standardizing animal mitochondrial sequences.
+- When you are using `mtgrasp_standardize.py` as a stand-alone tool, the input fasta can be a single fasta file containing multiple mitochondrial sequences or a single sequence. 
+- The headers of the fasta sequences contain information about whether the sequence is start-site standardized and strand standardized or not. Start-site standardized means the sequence starts with tRNA-Phe and strand standardized means the final sequence is on the positive strand. 
+- The fasta headers also contain 'Linear', however, this does not mean the sequence is indeed linear, it simply means the sequence did not go through the circularization step during the mtGrasp pipeline. 
 
 
 
