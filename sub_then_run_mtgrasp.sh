@@ -1,8 +1,8 @@
 #!/bin/bash
 
-'''
-This script is used to run mtgrasp on subsampled reads. It is called by the snakemake pipeline after the pipeline has finished running if the --subsample flag is set.
-'''
+
+#This script is used to run mtgrasp on subsampled reads. It is called by the snakemake pipeline after the pipeline has finished running if the --subsample flag is set.
+
 
 out_dir=$1
 r1=$2
