@@ -195,11 +195,11 @@ if os.stat(file).st_size == 0:
 # skip the annotation, because the start-site standardization is not needed in this case
 # start-site standardization is only needed when there is only one sequence in the fasta file
 elif num_of_assemblies > 1 and scenario_in_file == False:
-    print('Multiple sequences in the fasta file, no start-site standardization needed')
+    print('Multiple contigs in the fasta file, standardization cannot be performed')
     # write the original fasta file to the output directory
     with open('%s/%s.final-mtgrasp-assembly.fa'%(output_dir,sample), 'w') as f:
             for record in SeqIO.parse(file, "fasta"):
-                f.write('>%s\n' % (record.description) + str(record.seq) + '\n')
+                f.write('>Non-Standardized_%s_seq\n' % (sample) + str(record.seq) + '\n')
 # if the file has only one sequence or has 2 sequences (but 'Scenario' is found in file)
 # start the start-site standardization
 elif num_of_assemblies == 2 or num_of_assemblies == 1: 

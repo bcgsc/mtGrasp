@@ -259,7 +259,7 @@ Because mtGrasp annotation uses a third-party tool called [MITOS](https://www.sc
 
 ***Please note***: 
 - Currently, mtGrasp only supports standardizing animal mitochondrial sequences.
-- When you are using `mtgrasp_standardize.py` as a stand-alone tool, the input fasta can be a single fasta file containing multiple mitochondrial sequences or a single sequence. 
+- When you are using `mtgrasp_standardize.py` as a stand-alone tool, the input fasta MUST contain only one mitochondrial sequence, currently, mtGrasp does not support standardizing multiple mitochondrial sequences in one fasta file. 
 - The headers of the fasta sequences contain information about whether the sequence is start-site standardized and strand standardized or not. Start-site standardized means the sequence starts with tRNA-Phe and strand standardized means the final sequence is on the positive strand. 
 - The fasta headers also contain 'Linear', however, this does not mean the sequence is indeed linear, it simply means the sequence did not go through the circularization step during the mtGrasp pipeline. 
 
