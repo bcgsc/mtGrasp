@@ -30,7 +30,7 @@ git clone https://github.com/bcgsc/mtGrasp.git
 * Snakemake 
 * Pandas 
 * Numpy 
-* BLAST 
+* BLAST v2.10+
 * Biopython 
 * Seqtk 
 * ABySS v2.2.0+
