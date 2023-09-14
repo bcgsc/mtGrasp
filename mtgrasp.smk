@@ -244,22 +244,25 @@ rule pre_polishing:
           bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
           count = sum(1 for line in open(input[0]))
           k = k_string_converter(params.k)
-          if check_gaps(input.target) != 0:
+          # check if input file is empty
+          if count == 0:
+                print(f"Input file {input.target} is empty, no mitochondrial sequence found.")
+                exit(1)
+          if check_gaps(input.target) != 0 and count == 2:
             print("---Start Sealer Gap Filling---")
-            if count <= 2:
-               shell("""abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {input.target} {params.r1} {params.r2} &> {log_sealer}""")
-               print("no ntJoin needed")
-            else:
-               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads} && abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
-               print("ntJoin needed")
-          else:
+            print("One-piece contig found, no ntJoin scaffolding needed")
+            shell("""abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {input.target} {params.r1} {params.r2} &> {log_sealer}""")
+        
+          elif check_gaps(input.target) == 0 and count == 2:
              print("---No Gaps Found, Gap Filling Not Needed---")
-             if count <= 2:
-               shell("cp {input.target} {output}")
-               print("no ntJoin needed")
-             else:
-                shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads} && cp {params.ntjoin_out} {output}""")
-                print("ntJoin needed")
+             print("One-piece contig found, no ntJoin scaffolding needed")
+             shell("cp {input.target} {output}")
+
+          # If multiple contigs are found, both ntJoin and Sealer are needed  
+          else: 
+               print("Mutiple contigs found, ntJoin scaffolding and Gap-filling are both needed")
+               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads} && abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
+               
 
                
 
