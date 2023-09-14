@@ -28,8 +28,7 @@ with open(sealer_log) as file_in:
                 ls.append(l)
 # check if the gap was filled
 gap_remaining = int(float(ls[1].split(' ')[0]) - float(ls[-3].split(' ')[3])) # gap remaining after sealer
-pre_sealer_gap = int(float(ls[1].split(' ')[0])) # gap before sealer
-if pre_sealer_gap - gap_remaining == 1:
+if gap_remaining == 0:
 # check the length of the fasta sequence
     for record in SeqIO.parse(pre_sealer_fake_gap, "fasta"):
         # calculate the flank size
