@@ -260,7 +260,7 @@ rule pre_polishing:
 
           # If multiple contigs are found, both ntJoin and Sealer are needed  
           else: 
-               print("Mutiple contigs found, ntJoin scaffolding and Gap-filling are both needed")
+               print("Multiple contigs found, ntJoin scaffolding and Gap-filling are both needed")
                shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads} && abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
                
 
