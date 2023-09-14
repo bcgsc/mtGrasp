@@ -32,7 +32,7 @@ git clone https://github.com/bcgsc/mtGrasp.git
 * Biopython 
 * Seqtk 
 * ABySS v2.2.0+
-* ntJoin v1.1.3
+* ntJoin v1.1.3+
 * BWA 
 * Samtools 
 * Pilon v1.24+
