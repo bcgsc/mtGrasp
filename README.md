@@ -28,13 +28,11 @@ git clone https://github.com/bcgsc/mtGrasp.git
 * Conda v4.13.0+ 
 * Python v3.9+
 * Snakemake 
-* Pandas 
-* Numpy 
 * BLAST v2.10+
 * Biopython 
 * Seqtk 
 * ABySS v2.2.0+
-* ntJoin
+* ntJoin v1.1.3
 * BWA 
 * Samtools 
 * Pilon v1.24+
