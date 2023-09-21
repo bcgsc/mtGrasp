@@ -10,7 +10,9 @@ output = sys.argv[2]
 config = sys.argv[3]
 ref_list = []
 with open(input, 'r') as f:
-    lines = f.readlines()
+    for line in f:
+        line = line.strip()
+        // do the logic
     for i in range(len(lines)):
         if lines[i].startswith('>'):
             header = lines[i].strip()
