@@ -50,7 +50,7 @@ conda activate mtgrasp
 mamba install -c conda-forge -c bioconda snakemake 'blast>=2.10.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard
 ```
 
-Alternative (Slower download):
+Alternative (Slower):
 ```
 conda create -n mtgrasp python=3.10
 conda activate mtgrasp
