@@ -211,7 +211,7 @@ rule extract_seq:
          ref_config = current_dir + "{library}/blast/k{k}_kc{kc}-ntjoin_ref_config.csv"
      shell:
          "seqtk subseq {input.assemblies} {input.query} > {output.query_out} ; "
-         "seqtk subseq {params.ref_fasta} {input.ref} > {output.ref_out} &&"
+         "seqtk subseq {params.ref_fasta} {input.ref} > {output.ref_out} ;"
          " mkdir -p {params.ref_outdir} && create_references_for_ntjoin.py {output.ref_out} {params.ref_outdir} {params.ref_config}"
 
 
