@@ -43,7 +43,7 @@ git clone https://github.com/bcgsc/mtGrasp.git
 ### Installation Instructions for Dependencies
 #### Step 1: 
 
-Recommended (Faster download):
+Recommended (Faster):
 ```
 conda create -n mtgrasp python=3.10 mamba
 conda activate mtgrasp
