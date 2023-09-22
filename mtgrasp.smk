@@ -1,4 +1,7 @@
 # Snakemake file for mtGrasp pipeline
+# Make sure to edit the version for new releases
+mtgrasp_version = 'v1.0.0'
+
 
 import os.path
 import shlex
@@ -19,7 +22,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp-assembly.fa", library = config["out_dir"], k = config["k"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version), library = config["out_dir"], k = config["k"], kc = config["kc"])
 
 
 
@@ -357,7 +360,7 @@ rule standardization:
         input:
             rules.end_recovery.output
         output:
-            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp-assembly.fa"
+            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version)
         benchmark:
             current_dir + "{library}/benchmark/k{k}_kc{kc}.standardization.benchmark.txt"
         params:
