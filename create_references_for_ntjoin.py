@@ -4,7 +4,6 @@
 # Usage: split_fasta.py <fasta file> <output directory> <config file>
 
 import sys
-from itertools import islice
 
 ntjoin_reference_weight = 2 #Refer to ntJoin README for more info: https://github.com/bcgsc/ntJoin
 input = sys.argv[1]
@@ -13,10 +12,12 @@ config = sys.argv[3]
 ref_list = []
 with open(input, 'r') as f:
     for line in f:
+       	line = line.strip()
         if line.startswith('>'):
-            header = line.strip()
+            header = line        
             filename = header.split(' ')[0].strip('>') + '.fasta'
-            sequence = next(islice(f, 1, None), None).strip()
+        else:
+            sequence = line
             with open(output + '/' + filename, 'w') as g:
                 g.write(header + '\n')
                 g.write(sequence + '\n')
