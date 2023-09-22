@@ -99,8 +99,6 @@ elif nosubsample == False and annotate == False:
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'No' "))
-elif version:
-    print(version)
     
 else:
     print('Please double check mtGrasp usage information')
