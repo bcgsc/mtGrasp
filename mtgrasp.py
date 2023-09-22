@@ -4,7 +4,7 @@
 import argparse
 import subprocess
 import shlex
-mtgrasp_version = 'v1.0.0' # Make sure to edit the version for future releases
+mtgrasp_version = 'mtGrasp v1.0.0' # Make sure to edit the version for future releases
 
 parser = argparse.ArgumentParser(description='Usage of mtGrasp')
 parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file', required=True)
@@ -29,7 +29,7 @@ parser.add_argument('-sub', '--subsample', help='Subsample N read pairs from two
 parser.add_argument('-nsub', '--nosubsample', help='Run mtGrasp using the entire read dataset without subsampling [False]', action='store_true')
 parser.add_argument('-an', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
 parser.add_argument('-d', '--delete', help='Delete intermediate subdirectories/files once mtGrasp reaches completion [False]', action='store_true')
-parser.add_argument('-v', '--version', action='Print out mtGrasp version', version=f'mtGrasp {mtgrasp_version}')
+parser.add_argument('-v', '--version', action=argparse._VersionAction, version=mtgrasp_version)
 
 
 
