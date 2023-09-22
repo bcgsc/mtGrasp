@@ -12,7 +12,7 @@ output = sys.argv[2]
 config = sys.argv[3]
 ref_list = []
 with open(input, 'r') as f:
-    for i, line in enumerate(f):
+    for line in f:
         if line.startswith('>'):
             header = line.strip()
             filename = header.split(' ')[0].strip('>') + '.fasta'
