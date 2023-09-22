@@ -4,6 +4,7 @@
 import argparse
 import subprocess
 import shlex
+mtgrasp_version = 'v1.0.0' # Make sure to edit the version for future releases
 
 parser = argparse.ArgumentParser(description='Usage of mtGrasp')
 parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file', required=True)
@@ -19,8 +20,8 @@ parser.add_argument('-a', '--abyss_fpr', help='False positive rate for the bloom
 parser.add_argument('-s', '--sealer_fpr', help='False positive rate for the bloom filter used by sealer during gap filling [0.01]', default = 0.01)
 parser.add_argument('-p', '--gap_filling_p', help='Merge at most N alternate paths during sealer gap filling step [5]', default = 5)
 parser.add_argument('-b', '--sealer_k', help='k-mer size used in sealer gap filling [60,80,100,120]', default = '60,80,100,120')
-parser.add_argument('-e', '--end_recov_sealer_fpr', help='False positive rate for the bloom filter used by sealer during flanking end recovery [0.01]', default = 0.01)
-parser.add_argument('-v', '--end_recov_sealer_k', help='k-mer size used in sealer flanking end recovery [60,80,100,120]', default = '60,80,100,120')
+parser.add_argument('-sf', '--end_recov_sealer_fpr', help='False positive rate for the bloom filter used by sealer during flanking end recovery [0.01]', default = 0.01)
+parser.add_argument('-sk', '--end_recov_sealer_k', help='k-mer size used in sealer flanking end recovery [60,80,100,120]', default = '60,80,100,120')
 parser.add_argument('-i', '--end_recov_p', help='Merge at most N alternate paths during sealer flanking end recovery [5]', default = 5)
 parser.add_argument('-u', '--unlock', help='Remove a lock implemented by snakemake on the working directory', action='store_true')
 parser.add_argument('-ma', '--mismatch_allowed', help='Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]', default = 1)
@@ -28,6 +29,7 @@ parser.add_argument('-sub', '--subsample', help='Subsample N read pairs from two
 parser.add_argument('-nsub', '--nosubsample', help='Run mtGrasp using the entire read dataset without subsampling [False]', action='store_true')
 parser.add_argument('-an', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
 parser.add_argument('-d', '--delete', help='Delete intermediate subdirectories/files once mtGrasp reaches completion [False]', action='store_true')
+parser.add_argument('-v', '--version', action='Print out mtGrasp version', version=f'mtGrasp {mtgrasp_version}')
 
 
 
@@ -54,6 +56,7 @@ subsample = args.subsample
 nosubsample = args.nosubsample
 annotate = args.annotate
 delete =args.delete
+version = args.version
 
 
 
@@ -96,6 +99,9 @@ elif nosubsample == False and annotate == False:
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'No' "))
+elif version:
+    print(version)
+    
 else:
     print('Please double check mtGrasp usage information')
     exit(1)
