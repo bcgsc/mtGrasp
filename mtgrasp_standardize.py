@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Make sure to edit the version for new releases
+mtgrasp_version = 'v1.0.0'
+
 import argparse
 import sys
 import shlex
@@ -187,7 +190,7 @@ else:
 if os.stat(file).st_size == 0:
     print('File is empty, no start-site standardization needed')
     # write an empty fasta file
-    with open('%s/%s.final-mtgrasp-assembly.fa'%(output_dir,sample), 'w') as f:
+    with open('%s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir,sample, mtgrasp_version), 'w') as f:
          f.write('')
 
 
@@ -197,7 +200,7 @@ if os.stat(file).st_size == 0:
 elif num_of_assemblies > 1 and scenario_in_file == False:
     print('Multiple contigs in the fasta file, standardization cannot be performed')
     # write the original fasta file to the output directory
-    with open('%s/%s.final-mtgrasp-assembly.fa'%(output_dir,sample), 'w') as f:
+    with open('%s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir,sample, mtgrasp_version), 'w') as f:
             for record in SeqIO.parse(file, "fasta"):
                 f.write('>Non-Standardized_%s_seq\n' % (sample) + str(record.seq) + '\n')
 # if the file has only one sequence or has 2 sequences (but 'Scenario' is found in file)
@@ -271,7 +274,7 @@ elif num_of_assemblies == 2 or num_of_assemblies == 1:
               
       
       standardized_seq = remove_duplicates_in_a_list(standardized_seq)
-      file_name = '%s/%s.final-mtgrasp-assembly.fa'%(output_dir, sample)
+      file_name = '%s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir, sample, mtgrasp_version)
 
       
       # Store the results of the function and file reading in variables
@@ -301,7 +304,7 @@ subprocess.call(cmd_shlex1)
 
 # Run MitoS annotation on the final assembly fasta file if '-a' argument is provided
 if annotate:
-      print('Start Annotating %s/%s.final-mtgrasp-assembly.fa'%(output_dir, sample))
+      print('Start Annotating %s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir, sample, mtgrasp_version))
       if not os.path.exists(f'{output_dir}/annotation_output'):
          cmd1 = f'mkdir -p {output_dir}/annotation_output' 
          cmd_shlex1 = shlex.split(cmd1)
@@ -310,7 +313,7 @@ if annotate:
       
       
       try:
-          output = run_mitos("mitos", '%s/%s.final-mtgrasp-assembly.fa'%(output_dir, sample), mito_gencode,f'{output_dir}/annotation_output', script_dir)
+          output = run_mitos("mitos", '%s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir, sample, mtgrasp_version), mito_gencode,f'{output_dir}/annotation_output', script_dir)
           print(f"Output: {output}")
       except Exception as e:
           print(f"Error: {e}")

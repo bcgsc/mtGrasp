@@ -1,120 +1,127 @@
 #!/usr/bin/env python3
 
-# This script generates a summary of the assembly outputs (including the number of one-pieces, the maximum scaffold length in each assembly, and the assembly name) 
-# and writes the list of path to assembly output files to a text file.
-
-
+'''
+This script can be used to summarize mtGrasp assembly outputs by providing a text file containing the relative or complete path(s) to assembly output folder(s). 
+'''
+mtgrasp_version = 'v1.0.0' # Make sure to edit the version for future releases
 
 import argparse
 import os
 import os.path
-from Bio import SeqIO
 import pandas as pd
 import sys
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--input',help='Input text file containing the path(s) to assembly output folder(s)',required=True)
-parser.add_argument('-t','--output',help='Output tsv filename',required=True)
-parser.add_argument('-l','--pathlist',help='Output file consisting of the full path(s) to the assembly output file(s)',required=True)
+parser.add_argument('-p','--prefix',help='Prefix for output files',required=True)
 
 args = parser.parse_args()
 
 input = args.input
-output = args.output
-pathlist = args.pathlist
+prefix = args.prefix
+
+tsv_filename = f'{prefix}_mtgrasp_{mtgrasp_version}_assembly_summary.tsv'
+path_txt_filename = f'{prefix}_mtgrasp_{mtgrasp_version}_path_to_output.txt'
 
 
+# Count the number of contigs,  Ns per 1000bp, and number of bases, length of longest contig, standardization status, etc. in an assembly output fasta
+def get_assembly_metrics(fasta):
+  seq_count = 0
+  num_bases = 0
+  total_n_count = 0 #Ns per 1000bp
+  with open(fasta, 'r') as f:
+      seq_len_list = []
+      for line in f:
+         line = line.strip()
+         if line.startswith('>'):
+              fasta_header = line
+         else:
+              seq = line.upper()
+              seq_len = len(seq)
+              seq_len_list.append(seq_len)
+              num_bases += seq_len
+              total_n_count += seq.count("N") # number of Ns per fasta sequence
+              seq_count += 1
+         
+      if num_bases != 0:
+           n_count_per_1000 = total_n_count /num_bases/ 1000
+      else:
+           n_count_per_1000 = 0
+      max_seq_len = max(seq_len_list)
+      if seq_count == 0:
+          standardization_status = 'N/A'
+          circle_check = 'N/A'
+      elif seq_count == 1:
+          if "Circular" in fasta_header:
+              circle_check = 'Circular'
+          else:
+              circle_check = 'Linear'
 
-def summarize_outputs(input, output, pathlist):
-    # report the sequence lengths of each scaffold in a fasta file
-    def count_seq_lengths(file):
-       lengths = []
-       with open(file, "r") as f:
-         for line in f:
-            if line.startswith(">"):
-                continue
-            else:
-                lengths.append(len(line.strip()))
-       return ",".join([str(x) for x in lengths])
-
-# report the standardization status of each assembly
-    def extract_headers(file):
-      headers = []
-      with open(file, "r") as f:
-        for line in f:
-            if line.startswith(">"):
-                line = line.strip()[1:] #remove >
-                headers.append(line)
-      return ",".join(headers)
+          if "StartSite" in fasta_header and "Strand" in fasta_header:
+              standardization_status = "StartSite_Strand_Standardized"
+          elif "StartSite" in fasta_header and "Strand" not in fasta_header:
+            standardization_status = "StartSite_Standardized"
+          elif "StartSite" not in fasta_header and "Strand" not in fasta_header:
+              standardization_status = "StartSite_Standardized"
+          else:
+              standardization_status = "Non-Standardized"
+      else:
+          # Circularization and standardization are only conducted for one-piece assemblies to avoid potentially introducing misassemblies 
+          circle_check = 'Linear'
+          standardization_status = "Non-Standardized"
 
 
-    assembly = []
-    number_of_sequences = []
-    scaffold_lengths = []
-    file_list =[]
-    gap_remaining = []
-    pre_sealer_gap = []
-    sealer_prefix = []
-    status = []
+      return n_count_per_1000, seq_count, num_bases, max_seq_len, circle_check, standardization_status 
+      
+assembly_list, n_count_list, seq_count_list, num_bases_list, max_seq_list, circle_check_list, standardization_status_list, file_list = [], [], [], [], [], [], [], []
 
-    file = open(input, 'r')
-    lines = file.read().splitlines()
-    
-
-    for line in lines:
-        #summarize sealer log files
-        dir_sealer = "%s/prepolishing"%(line)
-        dir_sealer_exists=os.path.isdir(dir_sealer)
-        if dir_sealer_exists == True:
-            for f in os.listdir(dir_sealer):
-                f_basename = os.path.basename(f)
-                if f_basename.endswith("_log.txt") and os.stat("%s/%s"%(dir_sealer,f)).st_size != 0:
-                    sealer_prefix.append("%s_%s"%(os.path.basename(line),'_'.join(f_basename.split('.')[0].split('_')[:-1])))
-                    with open("%s/%s"%(dir_sealer,f)) as file_in:
-                       ls = []
-                       for l in file_in:
-                         ls.append(l)
-                    gap_remaining.append(int(float(ls[1].split(' ')[0]) - float(ls[-3].split(' ')[3])))
-                    pre_sealer_gap.append(int(float(ls[1].split(' ')[0])))
-        else:
-            print("Error: %s does not exist"%(dir_sealer))
-            continue
-
-        
-        #summarize assembly outputs
-        directory = "%s/final_output"%(line)
+with open(input, 'r') as dirs:
+    for outdir in dirs:
+        outdir = outdir.strip()
+        if not os.path.exists(outdir):
+            print(f"Error: mtGrasp output directory {outdir} does not exist")
+        directory = "%s/final_output"%(outdir)
         dir_exists=os.path.exists(directory)
-        if dir_exists == True:
+
+        if dir_exists:
             for dir in os.listdir(directory):
-                fasta = os.path.abspath("%s/%s/%s.final-mtgrasp-assembly.fa"%(directory,dir,dir))
-                file_list.append(fasta)
+
+                fasta = os.path.abspath("%s/%s/%s.final-mtgrasp_%s-assembly.fa"%(directory,dir,dir, mtgrasp_version)) # Complete path to output fasta file
+                # check if fasta output file exists 
+                if os.path.exists(fasta) and any(line.startswith('>') for line in open(fasta)):
+                    n_count_list.append(get_assembly_metrics(fasta)[0])
+                    seq_count_list.append(get_assembly_metrics(fasta)[1])
+                    num_bases_list.append(get_assembly_metrics(fasta)[2])
+                    max_seq_list.append(get_assembly_metrics(fasta)[3])
+                    circle_check_list.append(get_assembly_metrics(fasta)[4])
+                    standardization_status_list.append(get_assembly_metrics(fasta)[5])
+                else:
+                    n_count_list.append(0)
+                    seq_count_list.append(0)
+                    num_bases_list.append(0)
+                    max_seq_list.append(0)
+                    circle_check_list.append('N/A')
+                    standardization_status_list.append('N/A')
                 
-                assembly.append(dir)
-                n = len([1 for l in open(fasta) if l.startswith(">")])
-                number_of_sequences.append(n)
-                scaffold_lengths.append(count_seq_lengths(fasta))
-                status.append(extract_headers(fasta))
-        else:
-            print("Error: %s does not exist"%(directory))
-            continue
-    
-    
-        
-    df_assm = pd.DataFrame({'Assembly':assembly, 'Number of sequences':number_of_sequences, 'Scaffold lengths':scaffold_lengths, 'Standardization status':status})
-    df_sealer = pd.DataFrame({'Assembly':sealer_prefix, 'Number of gaps (pre-GapFilling)':pre_sealer_gap, 'Number of gaps (post-GapFilling)':gap_remaining})
-                        
-    df = pd.merge(df_assm, df_sealer, on='Assembly')
+                
+                assembly_list.append(dir)
+                file_list.append(fasta)
 
 
-    
-    df.to_csv(output,sep='\t',index=False)
-    with open(pathlist, 'w') as f:
-            for item in file_list:
-                f.write("%s\n" % item)
-            
-    return 'Summary of assembly outputs and a list of paths to the final mtGrasp output fasta files generated successfully! \n They can be found here \n Output tsv summary: %s \n Output file consisting of the full path(s) to the assembly output file(s): %s'%(output,pathlist)
+df = pd.DataFrame({"Assembly": assembly_list,
+                   "Ns per 1000bp": n_count_list,
+                   "Number of Contigs": seq_count_list,
+                   "Total Number of Base Pairs Per Assembly": num_bases_list,
+                   "Length of the Longest Contig (bp)": max_seq_list,
+                   "Circular or Linear": circle_check_list,
+                   "Standardization Status": standardization_status_list
+                   })
+
+df.to_csv(tsv_filename, sep="\t")
+
+with open(path_txt_filename, 'w') as f:
+    for path in file_list:
+        f.write(f"{path}\n")
 
 
-if __name__ == '__main__':
-    print(summarize_outputs(input, output, pathlist))
+             

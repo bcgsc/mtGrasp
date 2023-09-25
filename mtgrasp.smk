@@ -1,4 +1,7 @@
 # Snakemake file for mtGrasp pipeline
+# Make sure to edit the version for new releases
+mtgrasp_version = 'v1.0.0'
+
 
 import os.path
 import shlex
@@ -19,7 +22,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp-assembly.fa", library = config["out_dir"], k = config["k"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version), library = config["out_dir"], k = config["k"], kc = config["kc"])
 
 
 
@@ -186,8 +189,8 @@ rule create_lists:
      input:
          rules.blast.output
      output:
-         ref_list=current_dir + "{library}/blast/k{k}_kc{kc}-query.txt",
-         query_list=current_dir + "{library}/blast/k{k}_kc{kc}-ref.txt"
+         ref_list=current_dir + "{library}/blast/k{k}_kc{kc}-ref.txt",
+         query_list=current_dir + "{library}/blast/k{k}_kc{kc}-query.txt"
      benchmark:
          current_dir + "{library}/benchmark/k{k}_kc{kc}.create_lists.benchmark.txt"
      shell:
@@ -202,14 +205,18 @@ rule extract_seq:
          assemblies=rules.select_length.output
      output:
          query_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-scaffolds.blast-mt_db.fa",
-         ref_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-ref.fa"
+         ref_out=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}-ref.fa",
      benchmark:
          current_dir + "{library}/benchmark/k{k}_kc{kc}.extract_seq.benchmark.txt"
      params:
-         ref_fasta=config["ref_path"]
+         ref_fasta=config["ref_path"],
+         ref_outdir=current_dir + "{library}/blast/mito_refs",
+         ref_config = current_dir + "{library}/blast/k{k}_kc{kc}-ntjoin_ref_config.csv"
      shell:
          "seqtk subseq {input.assemblies} {input.query} > {output.query_out} ; "
-         "seqtk subseq {params.ref_fasta} {input.ref} > {output.ref_out}"
+         "seqtk subseq {params.ref_fasta} {input.ref} > {output.ref_out} ;"
+         " mkdir -p {params.ref_outdir} && create_references_for_ntjoin.py {output.ref_out} {params.ref_outdir} {params.ref_config}"
+
 
 
 #Prepare for polishing: ntJoin+Sealer or Sealer
@@ -228,19 +235,18 @@ rule pre_polishing:
         sealer_fpr=config['sealer_fpr'],
         threads=config['threads'],
         p=config['p'],
-        k=config['sealer_k']
-      benchmark:
-        current_dir + "{library}/benchmark/k{k}_kc{kc}.pre_polishing.benchmark.txt"
-      log:
+        k=config['sealer_k'],
+        ref_config = current_dir + "{library}/blast/k{k}_kc{kc}-ntjoin_ref_config.csv",
         sealer=current_dir + "{library}/prepolishing/k{k}_kc{kc}_sealer.log",
         ntjoin=current_dir + "{library}/mito_filtering_output/k{k}_kc{kc}_ntjoin.log"
-      
+      benchmark:
+        current_dir + "{library}/benchmark/k{k}_kc{kc}.pre_polishing.benchmark.txt"
       run: 
           import os
           target = os.path.basename(input.target)
           ref = os.path.basename(input.ref)
-          log_ntjoin = os.path.basename(log.ntjoin)
-          log_sealer = log.sealer
+          log_ntjoin = os.path.basename(params.ntjoin)
+          log_sealer = params.sealer
           bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
           count = sum(1 for line in open(input[0]))
           k = k_string_converter(params.k)
@@ -249,7 +255,7 @@ rule pre_polishing:
           if count == 0:
                 print(f"Input file {input.target} is empty, no mitochondrial sequence found.")
                 exit(1)
-          if num_gaps != 0 and count == 2:
+          elif num_gaps != 0 and count == 2:
             print("---Start Sealer Gap Filling---")
             print("One-piece contig found, no ntJoin scaffolding needed")
             shell("""abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {input.target} {params.r1} {params.r2} &> {log_sealer}""")
@@ -261,9 +267,15 @@ rule pre_polishing:
 
           # If multiple contigs are found, both ntJoin and Sealer are needed  
           else: 
-               print("Multiple contigs found, ntJoin scaffolding and Gap-filling are both needed")
-               shell("""bash run_ntjoin.sh {params.workdir} {target} {ref} {log_ntjoin} {params.threads}""") 
-               shell("""abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
+               print("Multiple contigs found, ntJoin scaffolding starts")
+               shell("""run_ntjoin.sh {params.workdir} {target} {params.ref_config} {log_ntjoin} {params.threads}""") 
+               # check gaps need to be filled or not post-ntJoin
+               if check_gaps(params.ntjoin_out) == 0:
+                  print("---No Gaps Found After ntJoin, Gap Filling Not Needed---")
+                  shell("cp {params.ntjoin_out} {output}")
+               else:
+                  print("---Gap Found After ntJoin, Start Sealer Gap Filling---")
+                  shell("""abyss-sealer -b{bf} -j {params.threads} -vv {k} -P {params.p} -o {params.out} -S {params.ntjoin_out}  {params.r1} {params.r2} &> {log_sealer}""")
                
 
                
@@ -348,7 +360,7 @@ rule standardization:
         input:
             rules.end_recovery.output
         output:
-            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp-assembly.fa"
+            current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version)
         benchmark:
             current_dir + "{library}/benchmark/k{k}_kc{kc}.standardization.benchmark.txt"
         params:
