@@ -13,7 +13,7 @@ Implementation: Cecilia Yang
 # Setup
 1. Download mtGrasp package
 
-You can download the latest version of the tarball file [here](https://github.com/bcgsc/mtGrasp/releases/download/v1.0.0/mtGrasp-1.0.0.tar.gz).
+  You can download the latest version of the tarball file [here](https://github.com/bcgsc/mtGrasp/releases/download/v1.0.0/mtGrasp-1.0.0.tar.gz).
 
 
 2. Add the mtGrasp directory to your PATH, use the following command to check if it is added correctly
