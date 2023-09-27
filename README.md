@@ -11,15 +11,15 @@ Concept: Lauren Coombe and Cecilia Yang
 Implementation: Cecilia Yang
 
 # Setup
-1. Clone the repository
+1. Download mtGrasp package
 
-```
-git clone https://github.com/bcgsc/mtGrasp.git
-```
+  You can download the latest version of the tarball file [here](https://github.com/bcgsc/mtGrasp/releases/download/v1.0.0/mtGrasp-1.0.0.tar.gz).
+
 
 2. Add the mtGrasp directory to your PATH, use the following command to check if it is added correctly
-
-
+```
+echo $PATH
+```
 
 
 3. Install dependencies
