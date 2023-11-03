@@ -74,7 +74,7 @@ conda install -c bioconda hmmer=3.2 infernal=1.1 'viennarna<2'
 conda install -c bioconda mitos=2.0.8
 ```
 
-### Installation Instructions for Dependencies (For users without access to conda)
+
 
 
 
@@ -129,6 +129,7 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 `-mp` or `--mitos_path`: Complete path to runmitos.py (e.g., /home/user/path/to/mitos), this is required for users who can't access conda [None]
 
+`-test` or `--test_run`:Test run mtGrasp to ensure all required dependencies are installed [False]
 
 
 `-a` or `--abyss_fpr=N`: False positive rate for the bloom filter used by abyss during the assembly step [0.005]
