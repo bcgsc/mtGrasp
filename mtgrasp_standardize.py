@@ -166,7 +166,7 @@ def find_conda_env(env_name):
 def run_mitos(env_name, file, code, dir, script_dir, mitos_path):
     path_to_env = find_conda_env(env_name)
     # Run mitos via conda
-    if mitos_path == None:
+    if mitos_path == 'None':
        cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
        process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
        output = process.communicate()[0].decode("utf-8").strip()
