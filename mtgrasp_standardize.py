@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Make sure to edit the version for new releases
-mtgrasp_version = 'v1.0.0'
+mtgrasp_version = 'v1.1.0'
 
 import argparse
 import sys
@@ -18,6 +18,7 @@ parser.add_argument('-o', '--output', help='Output directory', required=True)
 parser.add_argument('-p', '--prefix', help='Prefix for the output file', default='mtgrasp_standardized')
 parser.add_argument('-c', '--gencode', help='Mitochondrial genetic code used for gene annotation', required=True)
 parser.add_argument('-a', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
+parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
 
 args = parser.parse_args()
 file = args.input
@@ -25,6 +26,7 @@ mito_gencode = args.gencode
 output_dir = args.output
 sample = args.prefix
 annotate = args.annotate
+mitos_path = args.mitos_path
 
 
 # get the directory of the script
@@ -161,14 +163,22 @@ def find_conda_env(env_name):
         
 
 # This function runs MitoS annotation
-def run_mitos(env_name, file, code, dir, script_dir):
+def run_mitos(env_name, file, code, dir, script_dir, mitos_path):
     path_to_env = find_conda_env(env_name)
-
-    cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
-    process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
-    output = process.communicate()[0].decode("utf-8").strip()
-
-    return output
+    # Run mitos via conda
+    if mitos_path == None:
+       cmd = f"conda run -p {path_to_env} runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+       process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
+       output = process.communicate()[0].decode("utf-8").strip()
+       return output
+    # Run mitos independently without conda
+    else:
+      if os.path.exists({mitos_path}/runmitos.py):
+        cmd = "export $PATH={mitos_path}"
+        cmd = f"{mitos_path}/runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+      else:
+        return "The provided mitos path is not correct, please double check"
+    
 
 
 
@@ -218,7 +228,7 @@ elif num_of_assemblies == 2 or num_of_assemblies == 1:
 
       # annotate the file
       try:
-          output = run_mitos("mitos", file, code, anno_dir, script_dir)
+          output = run_mitos("mitos", file, code, anno_dir, script_dir, mitos_path)
           print(f"Output: {output}")
       except Exception as e:
           print(f"Error: {e}")
