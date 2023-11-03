@@ -31,6 +31,7 @@ parser.add_argument('-an', '--annotate', help='Run gene annotation on the final 
 parser.add_argument('-d', '--delete', help='Delete intermediate subdirectories/files once mtGrasp reaches completion [False]', action='store_true')
 parser.add_argument('-v', '--version', action="version", version=mtgrasp_version)
 parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
+parser.add_argument('-test', '--test_run', help='Test run mtGrasp to ensure all required dependencies are installed', action='store_true')
 
 
 
@@ -58,6 +59,7 @@ nosubsample = args.nosubsample
 annotate = args.annotate
 delete =args.delete
 mitos_path=args.mitos_path
+test_run=args.test_run
 
 
 
@@ -101,6 +103,8 @@ elif nosubsample == False and annotate == False:
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'No' {mitos_path}"))
+elif test_run:
+   subprocess.run(shlex.split(f"{script_dir}/test/test.sh {mitos_path}"))
     
 else:
     print('Please double check mtGrasp usage information')
