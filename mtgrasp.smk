@@ -366,7 +366,7 @@ rule standardization:
         params:
             mito_gencode=config["mt_code"],
             outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}",
-            annotate=config["annotate"]
+            annotate=config["annotate"],
             mitos_path=config["mitos_path"]
         run:
             if params.annotate=='No':
