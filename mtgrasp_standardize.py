@@ -325,7 +325,7 @@ if annotate:
       
       
       try:
-          output = run_mitos("mitos", '%s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir, sample, mtgrasp_version), mito_gencode,f'{output_dir}/annotation_output', script_dir)
+          output = run_mitos("mitos", '%s/%s.final-mtgrasp_%s-assembly.fa'%(output_dir, sample, mtgrasp_version), mito_gencode,f'{output_dir}/annotation_output', script_dir, mitos_path)
           print(f"Output: {output}")
       except Exception as e:
           print(f"Error: {e}")
