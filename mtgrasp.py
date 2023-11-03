@@ -4,7 +4,7 @@
 import argparse
 import subprocess
 import shlex
-mtgrasp_version = 'mtGrasp v1.0.0' # Make sure to edit the version for future releases
+mtgrasp_version = 'mtGrasp v1.1.0' # Make sure to edit the version for future releases
 
 parser = argparse.ArgumentParser(description='Usage of mtGrasp')
 parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file', required=True)
