@@ -174,8 +174,10 @@ def run_mitos(env_name, file, code, dir, script_dir, mitos_path):
     # Run mitos independently without conda
     else:
       if os.path.exists({mitos_path}/runmitos.py):
-        cmd = "export $PATH={mitos_path}"
         cmd = f"{mitos_path}/runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+        process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
+        output = process.communicate()[0].decode("utf-8").strip()
+        return output
       else:
         return "The provided mitos path is not correct, please double check"
     
