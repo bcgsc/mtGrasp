@@ -24,8 +24,6 @@ echo $PATH
 
 3. Install dependencies
 
-
-* Conda v4.13.0+ 
 * Python v3.9+
 * Snakemake 
 * BLAST v2.10+
@@ -40,7 +38,7 @@ echo $PATH
 * ntCard
 
 ---
-### Installation Instructions for Dependencies
+### Installation Instructions for Dependencies (For Conda users)
 #### Step 1: 
 
 Recommended (Faster):
@@ -58,7 +56,7 @@ conda install -c conda-forge -c bioconda snakemake 'blast>=2.10.0' biopython seq
 ```
 
 
-#### Step 2: Special Installation Instructions for MITOS
+#### Step 2: Special Installation Instructions for MITOS 
 
 
 As MITOS uses an older Python version, please install it in a new conda environment called "mitos" using the instructions below:
@@ -76,7 +74,7 @@ conda install -c bioconda hmmer=3.2 infernal=1.1 'viennarna<2'
 conda install -c bioconda mitos=2.0.8
 ```
 
-
+### Installation Instructions for Dependencies (For users without access to conda)
 
 
 
@@ -128,6 +126,9 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 `-an` or `--annotate`: Run gene annotation on the final assembly output [False]
 
 `-d` or `--delete`: Delete intermediate subdirectories/files once mtGrasp reaches completion [False]
+
+`-mp` or `--mitos_path`: Complete path to runmitos.py (e.g., /home/user/path/to/mitos), this is required for users who can't access conda [None]
+
 
 
 `-a` or `--abyss_fpr=N`: False positive rate for the bloom filter used by abyss during the assembly step [0.005]
