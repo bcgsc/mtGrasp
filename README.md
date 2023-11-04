@@ -76,7 +76,12 @@ conda install -c bioconda mitos=2.0.8
 
 
 
+### Test-run mtGrasp to ensure all required dependencies are installed
 
+```
+mtgrasp.py -test
+
+```
 
 # Running mtGrasp
 
@@ -194,8 +199,16 @@ mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r
 Snakemake uses a lock file to prevent other instances of Snakemake from running the same command simultaneously, if your working directory is locked by snakemake, use `-u or --unlock` to unlock the working directory
 
 ```
-mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -u 
+mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -u
 ```
+
+***For users who don't have access to Conda***
+Make sure to specify the complete path to the "runmitos.py" script (can be found in the environment directory where you installed mitos
+```
+mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -mp /path/to/mitos_env 
+```
+
+
 ---
 ### Where to Look For Output Files
 
