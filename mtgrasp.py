@@ -74,10 +74,15 @@ string = string.strip()
 script_dir = '/'.join(string.split('/')[0:-1])
 
 # get the base names of the read files
-read1_base = r1.split('/')[-1].split('.')[0]
-read2_base = r2.split('/')[-1].split('.')[0]
-
-if dry_run:
+if not test_run:
+  read1_base = r1.split('/')[-1].split('.')[0]
+  read2_base = r2.split('/')[-1].split('.')[0]
+else:
+  pass
+    
+if test_run:
+   subprocess.run(shlex.split(f"{script_dir}/test/test.sh {mitos_path}"))
+elif dry_run:
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk -np --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='N/A' mitos_path={mitos_path} "))
 elif unlock:
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --unlock --config r1={r1} r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} annotate='N/A' mitos_path={mitos_path} "))
@@ -104,8 +109,6 @@ elif nosubsample == False and annotate == False:
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'No' {mitos_path}"))
-elif test_run:
-   subprocess.run(shlex.split(f"{script_dir}/test/test.sh {mitos_path}"))
     
 else:
     print('Please double check mtGrasp usage information')
