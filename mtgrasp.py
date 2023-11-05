@@ -5,16 +5,17 @@ import argparse
 import subprocess
 import shlex
 mtgrasp_version = 'mtGrasp v1.1.0' # Make sure to edit the version for future releases
+# Required parameters 
+parser = argparse.ArgumentParser(description='Usage of mtGrasp\nThe following arguments are required: -r1/--read1, -r2/--read2, -o/--out_dir, -m/--mt_gen, -r/--ref_path')
+parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file [Required]')
+parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file [Required]')
+parser.add_argument('-o', '--out_dir', help='Output directory [Required]')
+parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code [Required]')
+parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file [Required]')
 
-parser = argparse.ArgumentParser(description='Usage of mtGrasp')
-parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file', required=True)
-parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file', required=True)
-parser.add_argument('-o', '--out_dir', help='Output directory', required=True)
-parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code', required=True)
 parser.add_argument('-t', '--threads', help='Number of threads [8]', default = 8)
 parser.add_argument('-k', '--kmer', help='k-mer size used in abyss de novo assembly [91] (Please note: k-mer size must be less than 128)', default = 91)
 parser.add_argument('-c', '--kc', help='kc [3]', default = 3)
-parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file', required=True)
 parser.add_argument('-n', '--dry_run', help='Dry-run pipeline', action='store_true')
 parser.add_argument('-a', '--abyss_fpr', help='False positive rate for the bloom filter used by abyss [0.005]', default = 0.005)
 parser.add_argument('-s', '--sealer_fpr', help='False positive rate for the bloom filter used by sealer during gap filling [0.01]', default = 0.01)
