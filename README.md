@@ -135,7 +135,7 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 `-d` or `--delete`: Delete intermediate subdirectories/files once mtGrasp reaches completion [False]
 
-`-mp` or `--mitos_path`: Complete path to runmitos.py (e.g., /home/user/path/to/mitos), this is required for users who can't access conda [None]
+`-mp` or `--mitos_path`: Complete path to `runmitos.py` (e.g., `/home/user/path/to/mitos/bin`), this is required for users who can't access conda [None]
 
 `-test` or `--test_run`:Test run mtGrasp to ensure all required dependencies are installed [False]
 
