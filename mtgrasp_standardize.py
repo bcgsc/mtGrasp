@@ -173,7 +173,14 @@ def run_mitos(env_name, file, code, dir, script_dir, mitos_path):
        return output
     # Run mitos independently without conda
     else:
-      if os.path.exists({mitos_path}/runmitos.py):
+      if os.path.exists(f"{mitos_path}/runmitos.py"):
+
+        # Add mitos_path to PATH
+        new_path = mitos_path
+        current_path = os.environ.get('PATH', '')
+        new_path_value = f'{new_path}:{current_path}'
+        os.environ['PATH'] = new_path_value
+
         cmd = f"{mitos_path}/runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
         process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
         output = process.communicate()[0].decode("utf-8").strip()
