@@ -6,7 +6,7 @@ import subprocess
 import shlex
 mtgrasp_version = 'mtGrasp v1.1.0' # Make sure to edit the version for future releases
 # Required parameters 
-parser = argparse.ArgumentParser(description='Usage of mtGrasp\nThe following arguments are required: -r1/--read1, -r2/--read2, -o/--out_dir, -m/--mt_gen, -r/--ref_path')
+parser = argparse.ArgumentParser(description='The following arguments are required: -r1/--read1, -r2/--read2, -o/--out_dir, -m/--mt_gen, -r/--ref_path')
 parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file [Required]')
 parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file [Required]')
 parser.add_argument('-o', '--out_dir', help='Output directory [Required]')
