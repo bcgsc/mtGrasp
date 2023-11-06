@@ -24,8 +24,6 @@ echo $PATH
 
 3. Install dependencies
 
-
-* Conda v4.13.0+ 
 * Python v3.9+
 * Snakemake 
 * BLAST v2.10+
@@ -40,7 +38,7 @@ echo $PATH
 * ntCard
 
 ---
-### Installation Instructions for Dependencies
+### Installation Instructions for Dependencies (For Conda users)
 #### Step 1: 
 
 Recommended (Faster):
@@ -58,7 +56,7 @@ conda install -c conda-forge -c bioconda snakemake 'blast>=2.10.0' biopython seq
 ```
 
 
-#### Step 2: Special Installation Instructions for MITOS
+#### Step 2: Special Installation Instructions for MITOS 
 
 
 As MITOS uses an older Python version, please install it in a new conda environment called "mitos" using the instructions below:
@@ -77,9 +75,17 @@ conda install -c bioconda mitos=2.0.8
 ```
 
 
-
-
-
+# Test run
+### Test-run mtGrasp to ensure all required dependencies are installed
+For conda users:
+```
+mtgrasp.py -test
+```
+For non-conda users:
+```
+mtgrasp.py -test -mp /path/to/mitos_env
+```
+Note: `/path/to/mitos_env` is the location where the main MITOS script `runmitos.py` is stored
 # Running mtGrasp
 
 ### Required Parameters 
@@ -128,6 +134,10 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 `-an` or `--annotate`: Run gene annotation on the final assembly output [False]
 
 `-d` or `--delete`: Delete intermediate subdirectories/files once mtGrasp reaches completion [False]
+
+`-mp` or `--mitos_path`: Complete path to `runmitos.py` (e.g., `/home/user/path/to/mitos/bin`), this is required for users who can't access conda [None]
+
+`-test` or `--test_run`:Test run mtGrasp to ensure all required dependencies are installed [False]
 
 
 `-a` or `--abyss_fpr=N`: False positive rate for the bloom filter used by abyss during the assembly step [0.005]
@@ -192,8 +202,17 @@ mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r
 Snakemake uses a lock file to prevent other instances of Snakemake from running the same command simultaneously, if your working directory is locked by snakemake, use `-u or --unlock` to unlock the working directory
 
 ```
-mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -u 
+mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -u
 ```
+
+***For users who don't have access to Conda***
+
+Make sure to specify the complete path to the "runmitos.py" script (can be found in the environment directory where you installed mitos
+```
+mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -mp /path/to/mitos_env 
+```
+Note: `/path/to/mitos_env` is the location where the main MITOS script `runmitos.py` is stored
+
 ---
 ### Where to Look For Output Files
 

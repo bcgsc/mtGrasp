@@ -1,6 +1,6 @@
 # Snakemake file for mtGrasp pipeline
 # Make sure to edit the version for new releases
-mtgrasp_version = 'v1.0.0'
+mtgrasp_version = 'v1.1.0'
 
 
 import os.path
@@ -366,10 +366,11 @@ rule standardization:
         params:
             mito_gencode=config["mt_code"],
             outdir=current_dir + "{library}/final_output/{library}_k{k}_kc{kc}",
-            annotate=config["annotate"]
+            annotate=config["annotate"],
+            mitos_path=config["mitos_path"]
         run:
             if params.annotate=='No':
-              shell("mtgrasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc}")
+              shell("mtgrasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} -mp {params.mitos_path} ")
             else:
-               shell("mtgrasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} -a")
+               shell("mtgrasp_standardize.py -i {input} -c {params.mito_gencode} -o {params.outdir} -p {wildcards.library}_k{wildcards.k}_kc{wildcards.kc} -a -mp {params.mitos_path}")
         
