@@ -76,7 +76,9 @@ conda install -c bioconda mitos=2.0.8
 
 
 # Test run
-### Test-run mtGrasp to ensure all required dependencies are installed
+### Test-run mtGrasp to ensure all required dependencies are installed properly
+The test will take ~5-10min to complete.
+
 For conda users:
 ```
 mtgrasp.py -test
