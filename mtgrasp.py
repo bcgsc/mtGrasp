@@ -63,7 +63,21 @@ mitos_path=args.mitos_path
 test_run=args.test_run
 
 
-
+# check if 'runmitos.py' is in PATH
+output = subprocess.Popen(['which', 'runmitos.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+stdout, _ = output.communicate()
+path_output = stdout.decode().strip()
+if '/runmitos.py' in path_output:
+  mitos_path = path_output.replace('/runmitos.py','')
+else:
+  # check if conda is available
+  find_conda = subprocess.Popen(['conda', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  _, stderr = find_conda.communicate()
+  if stderr:
+    print('mtGrasp is executed in a non-Conda environment. Please add the full path to runmitos.py to your $PATH.')
+    sys.exit()
+  else:
+    pass
 
 # get the directory of the mtgrasp.smk script
 string = subprocess.check_output(['which', 'mtgrasp.smk'])
