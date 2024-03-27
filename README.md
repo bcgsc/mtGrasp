@@ -209,7 +209,9 @@ mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r
 
 ***For users who don't have access to Conda***
 
-Make sure to specify the complete path to the "runmitos.py" script (can be found in the environment directory where you installed mitos
+If you've already added `runmitos.py` script from MITOS to your PATH, mtGrasp will find it automatically, so there's no need to specify -mp.
+
+If `runmitos.py` is not added to PATH, please make sure to specify the complete path to the "runmitos.py" script (can be found in the environment directory where you installed mitos)
 ```
 mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -mp /path/to/mitos_env 
 ```
