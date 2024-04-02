@@ -24,6 +24,7 @@ jobs:
     displayName: Install dependencies
 
   - script: |
+      source activate mtgrasp_ci
       export PATH=$(PWD):$PATH
       mtgrasp.py -test
     displayName: Test mtGrasp

@@ -2,6 +2,7 @@
 # Run this script to ensure all required dependencies are installed for mtGrasp
 # Make sure to edit the version for new releases
 
+set -eux -o pipefail
 
 mitos_path=$1
 
@@ -16,4 +17,5 @@ if [[ -n "$file" ]]; then
     echo "The output files can be found in the test_out directory. The final assembly file can be found at: test_out/final_output/test_out_k91_kc3/test_out_k91_kc3.final-mtgrasp_<version>-assembly.fa"
 else
     echo "Error: mtGrasp could not run successfully due to missing dependencies. Please check the test.log file and make sure all required dependencies are installed before running the program."
+    exit 1
 fi
