@@ -4,6 +4,8 @@
 import argparse
 import subprocess
 import shlex
+import sys
+
 mtgrasp_version = 'mtGrasp v1.1.2' # Make sure to edit the version for future releases
 # Required parameters 
 parser = argparse.ArgumentParser(description='The following arguments are required: -r1/--read1, -r2/--read2, -o/--out_dir, -m/--mt_gen, -r/--ref_path')
@@ -73,21 +75,17 @@ mitos_path=args.mitos_path
 test_run=args.test_run
 
 
-# check if 'runmitos.py' is in PATH
-output = subprocess.Popen(['which', 'runmitos.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-stdout, _ = output.communicate()
-path_output = stdout.decode().strip()
-if '/runmitos.py' in path_output:
-  mitos_path = path_output.replace('/runmitos.py','')
-else:
-  # check if conda is available
-  find_conda = subprocess.Popen(['conda', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  _, stderr = find_conda.communicate()
-  if stderr:
-    print('mtGrasp is executed in a non-Conda environment. Please add the full path to runmitos.py to your $PATH.')
-    sys.exit()
+# If the mitos path isn't supplied, check if 'runmitos.py' is in PATH
+if not args.mitos_path:
+  output = subprocess.Popen(['which', 'runmitos.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  stdout, _ = output.communicate()
+  path_output = stdout.decode().strip()
+  if '/runmitos.py' in path_output:
+    mitos_path = path_output.replace('/runmitos.py','')
   else:
-    pass
+    print("Please ensure runmitos.py is available on your PATH or specify the path using -mp")
+    sys.exit(1)
+
 
 # get the directory of the mtgrasp.smk script
 string = subprocess.check_output(['which', 'mtgrasp.smk'])
