@@ -1,19 +1,27 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# mtGrasp CI
 
-trigger:
-- master
+jobs:
+- job:
+  displayName: ubuntu-latest
+  pool:
+    vmImage: 'ubuntu-latest'
 
-pool:
-  vmImage: ubuntu-latest
+  steps:
+  - checkout: self
+    persistCredentials: true
+    submodules: true
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - script: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: conda create --yes --quiet --name mtgrasp_ci
+    displayName: Create Anaconda environment
+
+  - script: |
+      source activate mtgrasp_ci
+      conda install --yes -c bioconda -c conda-forge python=3.10 mamba
+      mamba install -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
+    displayName: Install dependencies
+
+  - script: mtgrasp.py -test
+    displayName: Test mtGrasp
