@@ -39,39 +39,18 @@ echo $PATH
 
 ---
 ### Installation Instructions for Dependencies (For Conda users)
-#### Step 1: 
-
 Recommended (Faster):
 ```
 conda create -n mtgrasp python=3.10 mamba
 conda activate mtgrasp
-mamba install -c conda-forge -c bioconda snakemake 'blast>=2.10.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard
+mamba install -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
 ```
 
 Alternative (Slower):
 ```
 conda create -n mtgrasp python=3.10
 conda activate mtgrasp
-conda install -c conda-forge -c bioconda snakemake 'blast>=2.10.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard
-```
-
-
-#### Step 2: Special Installation Instructions for MITOS 
-
-
-As MITOS uses an older Python version, please install it in a new conda environment called "mitos" using the instructions below:
-
-
-
-```
-conda create -n mitos
-conda activate mitos
-conda install python=2.7
-conda install 'r-base>=4' r-ggplot2 r-reshape2 openjdk
-conda install -c conda-forge biopython
-conda install -c bioconda blast=2.9
-conda install -c bioconda hmmer=3.2 infernal=1.1 'viennarna<2'
-conda install -c bioconda mitos=2.0.8
+conda install -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
 ```
 
 
@@ -79,29 +58,26 @@ conda install -c bioconda mitos=2.0.8
 ### Test-run mtGrasp to ensure all required dependencies are installed properly
 The test will take ~5-10min to complete.
 
-For conda users:
 ```
 mtgrasp.py -test
 ```
-For non-conda users:
+
+If `runmitos.py` is not available on your PATH:
 ```
-mtgrasp.py -test -mp /path/to/mitos_env
+mtgrasp.py -test -mp /path/to/mitos_install_dir
 ```
-Note: `/path/to/mitos_env` is the location where the main MITOS script `runmitos.py` is stored
+Note: `/path/to/mitos_install_dir` is the location where the main MITOS script `runmitos.py` is stored
 # Running mtGrasp
 
 ### Required Parameters 
 
-`-o` or `--out_dir=DIR`: output folder name ***(full path or relative path)*** [Required]
+`-o` or `--out_dir=DIR`: output folder name ***(full path or relative path)***
 
-`-r1` or `--read1=FILE`: compressed fastq.gz file containing the forward reads from paired-end sequencing ***(MUST be full path)*** [Required]
+`-r1` or `--read1=FILE`: compressed fastq.gz file containing the forward reads from paired-end sequencing ***(MUST be full path)***
 
-`-r2` or `--read2=FILE`: compressed fastq.gz file containing the reverse reads from paired-end sequencing ***(MUST be full path)*** [Required]
+`-r2` or `--read2=FILE`: compressed fastq.gz file containing the reverse reads from paired-end sequencing ***(MUST be full path)***
 
-
-
-`-r` or `--ref_path=FILE`: path to the fasta file containing reference sequences that will be used to build blast database ***(MUST be full path)*** [Required]
-
+`-r` or `--ref_path=FILE`: path to the fasta file containing reference sequences that will be used to build blast database ***(MUST be full path)***
 
 
 ***How to select sequences for the customized database?***
@@ -112,18 +88,18 @@ In case reference sequences are not accessible for your target species, you can 
 
 However, if such sequences are unavailable, you can move up the taxonomic hierarchy until you find a suitable sequence. Additionally, it is worth trying different sequences as altering the sequences in the database does not impact the final quality of the assembly process, it simply increases the likelihood of successful mitochondrial sequence searching in cases where they are successfully assembled.
 
-(**Please note**: Having more fasta sequences in the database will result in increased runtime and memory usage. The best practice is to have a maximum of one or two sequences belonging to the same species group (i.e. try to avoid duplicates of the same species))
+(**Please note**: Having more fasta sequences in the database will result in increased runtime and memory usage. (i.e. try to avoid duplicates of the same species))
 ---
 
 
-`-m` or `--mt_gen=N`: mitochondrial translation table code (e.g., 2, 5, 13) for your target species [Required]
+`-m` or `--mt_gen=N`: mitochondrial translation table code (e.g., 2, 5, 13) for your target species
 
 ***Mitochondrial translation table code can be searched on*** https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
 
 ---
 ###  Optional Parameters for Advanced Users 
 
-`-k` or `--kmer=N`: k-mer size used in the construction of de bruijn graph for ABySS [91] (Please note: k-mer size must be less than 128)
+`-k` or `--kmer=N`: k-mer size used in the construction of de Bruijn graph for ABySS [91]
 
 `-c` or `--kc=N`: k-mer minimum coverage multiplicity cutoff for ABySS [3]
 
@@ -135,22 +111,15 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 `-an` or `--annotate`: Run gene annotation on the final assembly output [False]
 
-`-d` or `--delete`: Delete intermediate subdirectories/files once mtGrasp reaches completion [False]
+`-d` or `--delete`: Delete intermediate subdirectories/files once mtGrasp finishes [False]
 
-`-mp` or `--mitos_path`: Complete path to `runmitos.py` (e.g., `/home/user/path/to/mitos/bin`), this is required for users who can't access conda [None]
+`-mp` or `--mitos_path`: Complete path to `runmitos.py` (e.g., `/home/user/path/to/mitos/bin`), this is required if `runmitos.py` is not found on your `PATH` [None]
 
 `-test` or `--test_run`:Test run mtGrasp to ensure all required dependencies are installed [False]
 
-
-`-a` or `--abyss_fpr=N`: False positive rate for the bloom filter used by abyss during the assembly step [0.005]
-
-`-s` or `--sealer_fpr=N`: False positive rate for the bloom filter used by sealer during the gap filling step [0.01]
-
 `-p` or `--gap_filling_p=N`: Merge at most N alternate paths during sealer gap filling step; use 'nolimit' for no limit [5]
 
-`-b` or `--sealer_k=STRING`: k-mer size(s) used in sealer gap filling ['60,80,100,120']
-
-`-sf` or `--end_recov_sealer_fpr=N`: False positive rate for the bloom filter used by sealer during flanking end recovery [0.01]
+`-b` or `--sealer_k=STRING`: k-mer size(s) used in Sealer gap filling ['60,80,100,120']
 
 `-sk` or `--end_recov_sealer_k=STRING`: k-mer size used in sealer flanking end recovery ['60,80,100,120']
 
@@ -159,8 +128,6 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 `-t` or `--threads=N`: number of threads to use [8]
 
 `-ma` or `--mismatch_allowed=N`: Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]
-
-`-v` or `--version`: Print out the version of mtGrasp and exit
 
  
 ---
@@ -172,7 +139,8 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 `-n` or `--dry_run`: dry run mtGrasp
 
 `-u` or `--unlock`: Remove a lock implemented by snakemake on the working directory
-    
+
+`-v` or `--version`: Print out the version of mtGrasp and exit
 
 
 
@@ -207,16 +175,6 @@ Snakemake uses a lock file to prevent other instances of Snakemake from running 
 mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -u
 ```
 
-***For users who don't have access to Conda***
-
-If you've already added `runmitos.py` script from MITOS to your PATH, mtGrasp will find it automatically, so there's no need to specify -mp.
-
-If `runmitos.py` is not added to PATH, please make sure to specify the complete path to the "runmitos.py" script (can be found in the environment directory where you installed mitos)
-```
-mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r /path/to/mito_db/refs.fa -mp /path/to/mitos_env 
-```
-Note: `/path/to/mitos_env` is the location where the main MITOS script `runmitos.py` is stored
-
 ---
 ### Where to Look For Output Files
 
@@ -235,8 +193,8 @@ If you are not interested in the standardized mitogenome sequence(s) or MITOS an
 
 
 ---
-### Standardize your own mitochondrial sequence(s) using mtGrasp
-If you have your own mitochondrial sequence(s) and would like to standardize it/them using mtGrasp, you can do so by using mtGrasp's `mtgrasp_standardize.py` script. 
+### Standardize any mitochondrial sequence(s) using mtGrasp
+If you have any mitochondrial sequence(s) and would like to standardize it/them using mtGrasp, you can do so by using mtGrasp's `mtgrasp_standardize.py` script. 
 
 For usage, please run `mtgrasp_standardize.py -h` for help:
 
@@ -266,16 +224,16 @@ The final output file containing the standardized mitochondrial sequence(s) can 
 
 If the `-a` or `--annotate` argument is provided, mtGrasp will run gene annotation for the final assembly output and the annotation results can be found in `<out_dir>/annotation_output`.
 
-The amino acid sequences of the annotated genes can be found in `<out_dir>/annotation_output/result.faa`.
+The annotated proteins can be found in `<out_dir>/annotation_output/result.faa`.
 
-The nucleotide sequences of the annotated genes can be found in `<out_dir>/annotation_output/result.fas`.
+The annotated transcripts can be found in `<out_dir>/annotation_output/result.fas`.
 
 The order of the annotated genes can be found in `<out_dir>/annotation_output/result.geneorder`.
 
 Because mtGrasp annotation uses a third-party tool called [MITOS](https://www.sciencedirect.com/science/article/abs/pii/S1055790312003326), any inquires regarding the annotation results should be directed to the [MITOS developers](https://gitlab.com/Bernt/MITOS).
 
 ***Please note***: 
-- Currently, mtGrasp only supports standardizing animal mitochondrial sequences.
+- Currently, mtGrasp only supports animal mitochondrial sequences.
 - When you are using `mtgrasp_standardize.py` as a stand-alone tool, the input fasta MUST contain only one mitochondrial sequence, currently, mtGrasp does not support standardizing multiple mitochondrial sequences in one fasta file. 
 - The headers of the fasta sequences contain information about whether the sequence is start-site standardized and strand standardized or not. Start-site standardized means the sequence starts with tRNA-Phe and strand standardized means the final sequence is on the positive strand. 
 - The fasta headers also contain 'Linear', however, this does not mean the sequence is indeed linear, it simply means the sequence did not go through the circularization step during the mtGrasp pipeline. 
@@ -290,7 +248,7 @@ Because mtGrasp annotation uses a third-party tool called [MITOS](https://www.sc
 mtgrasp_summarize.py -i <Input text file> -p <Prefix of the summary files>
 ```
 
-Here, this script will summarize the mtGrasp results for all assembly output folders listed in the input text file `<Input text file>`. The output tsv file `{prefix}_mtgrasp_{mtgrasp_version}_assembly_summary.tsv'` will contain the following columns:
+This script will summarize the mtGrasp results for all assembly output folders listed in the input text file `<Input text file>`. The output tsv file `{prefix}_mtgrasp_{mtgrasp_version}_assembly_summary.tsv'` will contain the following columns:
 
 `Assembly`: the name of the assembly output folder along with the k and kc values (number of read pairs if `-sub` is enabled) used for the assembly
 
@@ -300,7 +258,7 @@ Here, this script will summarize the mtGrasp results for all assembly output fol
 
 `Total Number of Base Pairs Per Assembly`: the total number of base pairs in the mitochondrial sequence(s) generated by mtGrasp
 
-`Length of the Lonest Contig (bp)`: the length of the longest mitochondrial sequence generated by mtGrasp
+`Length of the Longest Contig (bp)`: the length of the longest mitochondrial sequence generated by mtGrasp
 
 `Circular or Linear`: whether the mitochondrial sequence(s) generated by mtGrasp is circular or linear
 

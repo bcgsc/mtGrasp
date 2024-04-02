@@ -14,24 +14,34 @@ parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code [Required
 parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file [Required]')
 
 parser.add_argument('-t', '--threads', help='Number of threads [8]', default = 8)
-parser.add_argument('-k', '--kmer', help='k-mer size used in abyss de novo assembly [91] (Please note: k-mer size must be less than 128)', default = 91)
+parser.add_argument('-k', '--kmer', help='k-mer size used in ABySS de novo assembly [91]', default = 91)
 parser.add_argument('-c', '--kc', help='kc [3]', default = 3)
 parser.add_argument('-n', '--dry_run', help='Dry-run pipeline', action='store_true')
-parser.add_argument('-a', '--abyss_fpr', help='False positive rate for the bloom filter used by abyss [0.005]', default = 0.005)
-parser.add_argument('-s', '--sealer_fpr', help='False positive rate for the bloom filter used by sealer during gap filling [0.01]', default = 0.01)
-parser.add_argument('-p', '--gap_filling_p', help='Merge at most N alternate paths during sealer gap filling step [5]', default = 5)
-parser.add_argument('-b', '--sealer_k', help='k-mer size used in sealer gap filling [60,80,100,120]', default = '60,80,100,120')
-parser.add_argument('-sf', '--end_recov_sealer_fpr', help='False positive rate for the bloom filter used by sealer during flanking end recovery [0.01]', default = 0.01)
-parser.add_argument('-sk', '--end_recov_sealer_k', help='k-mer size used in sealer flanking end recovery [60,80,100,120]', default = '60,80,100,120')
-parser.add_argument('-i', '--end_recov_p', help='Merge at most N alternate paths during sealer flanking end recovery [5]', default = 5)
-parser.add_argument('-u', '--unlock', help='Remove a lock implemented by snakemake on the working directory', action='store_true')
-parser.add_argument('-ma', '--mismatch_allowed', help='Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]', default = 1)
+parser.add_argument('-p', '--gap_filling_p', help='Merge at most N alternate paths during sealer gap filling step [5]',
+                    default = 5)
+parser.add_argument('-b', '--sealer_k', help='k-mer size used in sealer gap filling [60,80,100,120]',
+                    default = '60,80,100,120')
+parser.add_argument('-sf', '--end_recov_sealer_fpr',
+                    help='False positive rate for the Bloom filter used by sealer during flanking end recovery [0.01]',
+                    default = 0.01)
+parser.add_argument('-sk', '--end_recov_sealer_k', =
+                    help='k-mer size used in sealer flanking end recovery [60,80,100,120]',
+                    default = '60,80,100,120')
+parser.add_argument('-i', '--end_recov_p', help='Merge at most N alternate paths during sealer flanking end recovery [5]',
+                    default = 5)
+parser.add_argument('-ma', '--mismatch_allowed',
+                    help='Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]',
+                    default = 1)
 parser.add_argument('-sub', '--subsample', help='Subsample N read pairs from two paired FASTQ files [2000000]', default = 2000000)
 parser.add_argument('-nsub', '--nosubsample', help='Run mtGrasp using the entire read dataset without subsampling [False]', action='store_true')
+parser.add_argument('-a', '--abyss_fpr', help='False positive rate for the Bloom filter used by ABySS [0.005]', default = 0.005)
+parser.add_argument('-s', '--sealer_fpr', help='False positive rate for the Bloom filter used by Sealer during gap filling [0.01]', default = 0.01)
+parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
 parser.add_argument('-an', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
 parser.add_argument('-d', '--delete', help='Delete intermediate subdirectories/files once mtGrasp reaches completion [False]', action='store_true')
 parser.add_argument('-v', '--version', action="version", version=mtgrasp_version)
-parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
+parser.add_argument('-u', '--unlock', help='Remove a lock implemented by snakemake on the working directory',
+                    action='store_true')
 parser.add_argument('-test', '--test_run', help='Test run mtGrasp to ensure all required dependencies are installed', action='store_true')
 
 
