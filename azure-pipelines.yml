@@ -1,0 +1,58 @@
+# mtGrasp CI
+
+jobs:
+- job:
+  displayName: ubuntu-latest
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - checkout: self
+    persistCredentials: true
+    submodules: true
+
+  - script: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH
+
+  - script: conda create --yes --quiet --name mtgrasp_ci
+    displayName: Create Anaconda environment
+
+  - script: |
+      source activate mtgrasp_ci
+      conda install --yes -c bioconda -c conda-forge python=3.10 mamba
+      mamba install --yes -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
+    displayName: Install dependencies
+
+  - script: |
+      source activate mtgrasp_ci
+      export PATH=$(pwd):$PATH
+      mtgrasp.py -test
+    displayName: Test mtGrasp
+
+- job:
+  displayName: macOS-latest
+  pool:
+    vmImage: 'macOS-latest'
+
+  steps:
+  - checkout: self
+    persistCredentials: true
+    submodules: true
+
+  - script: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH
+
+  - script: conda create --yes --quiet --name mtgrasp_ci
+    displayName: Create Anaconda environment
+
+  - script: |
+      source activate mtgrasp_ci
+      conda install --yes -c bioconda -c conda-forge python=3.10 mamba
+      mamba install --yes -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
+    displayName: Install dependencies
+
+  - script: |
+      source activate mtgrasp_ci
+      export PATH=$(pwd):$PATH
+      mtgrasp.py -test
+    displayName: Test mtGrasp

@@ -297,7 +297,7 @@ rule bwa_alignment:
       
       shell:
         "bwa index {input} && "
-        "bwa mem {input} {params.r1} {params.r2} -t {params.threads} | samtools view -b -F 4 | samtools sort -o {output} -@ {params.threads} && "
+        "bwa mem -t {params.threads} {input} {params.r1} {params.r2} | samtools view -b -F 4 | samtools sort -o {output} -@ {params.threads} && "
         "samtools index {output}"
 
 rule polishing:
