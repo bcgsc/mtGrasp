@@ -53,9 +53,6 @@ jobs:
 
   - script: |
       source activate mtgrasp_ci
-      echo $PATH
       export PATH=$(pwd):$PATH
-      echo $PATH
-      ls
       mtgrasp.py -test
     displayName: Test mtGrasp
