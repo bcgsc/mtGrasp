@@ -11,11 +11,11 @@ import sys
 MTGRASP_VERSION = 'mtGrasp v1.1.2' # Make sure to edit the version for future releases
 
 parser = argparse.ArgumentParser(description='mtGrasp: de novo assembly of reference-grade animal mitochondrial genomes')
-parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file [Required]', required=True)
-parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file [Required]', required=True)
-parser.add_argument('-o', '--out_dir', help='Output directory [Required]', required=True)
-parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code [Required]', required=True)
-parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file [Required]', required=True)
+parser.add_argument('-r1', '--read1', help='Forward read fastq.gz file [Required]')
+parser.add_argument('-r2', '--read2', help='Reverse read fastq.gz file [Required]')
+parser.add_argument('-o', '--out_dir', help='Output directory [Required]')
+parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code [Required]')
+parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file [Required]')
 
 parser.add_argument('-t', '--threads', help='Number of threads [8]', default = 8, type=int)
 parser.add_argument('-k', '--kmer', help='k-mer size used in ABySS de novo assembly [91]', default = 91, type=int)
