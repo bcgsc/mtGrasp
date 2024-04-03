@@ -117,7 +117,7 @@ df = pd.DataFrame({"Assembly": assembly_list,
                    "Standardization Status": standardization_status_list
                    })
 
-df.to_csv(tsv_filename, sep="\t")
+df.to_csv(tsv_filename, sep="\t", index=False)
 
 with open(path_txt_filename, 'w') as f:
     for path in file_list:
