@@ -19,19 +19,19 @@ parser.add_argument('-r', '--ref_path', help='Path to the reference fasta file [
 
 parser.add_argument('-t', '--threads', help='Number of threads [8]', default = 8, type=int)
 parser.add_argument('-k', '--kmer', help='k-mer size used in ABySS de novo assembly [91]', default = 91, type=int)
-parser.add_argument('-c', '--kc', help='kc [3]', default = 3, type=int)
+parser.add_argument('-c', '--kc', help='minimum k-mer multiplicity for ABySS [3]', default = 3, type=int)
 parser.add_argument('-p', '--gap_filling_p', help='Merge at most N alternate paths during sealer gap filling step [5]',
                     default = 5, type=int)
 parser.add_argument('-b', '--sealer_k', help='k-mer size used in sealer gap filling [60,80,100,120]',
                     default = '60,80,100,120')
 parser.add_argument('-sf', '--end_recov_sealer_fpr',
-                    help='False positive rate for the Bloom filter used by sealer during flanking end recovery [0.01]',
+                    help='False positive rate for the Bloom filter used by Sealer during flanking end recovery [0.01]',
                     default = 0.01, type=float)
 parser.add_argument('-sk', '--end_recov_sealer_k',
-                    help='k-mer size used in sealer flanking end recovery [60,80,100,120]',
+                    help='k-mer size used in Sealer flanking end recovery [60,80,100,120]',
                     default = '60,80,100,120')
 parser.add_argument('-i', '--end_recov_p',
-                    help='Merge at most N alternate paths during sealer flanking end recovery [5]',
+                    help='Merge at most N alternate paths during Sealer flanking end recovery [5]',
                     default = 5, type=int)
 parser.add_argument('-ma', '--mismatch_allowed',
                     help='Maximum number of mismatches allowed in overlaps between the two ends of the mitochondrial assembly [1]',
