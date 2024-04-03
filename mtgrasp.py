@@ -86,6 +86,9 @@ delete = args.delete
 mitos_path = args.mitos_path
 test_run = args.test_run
 
+if not test_run and (not r1 or not r2 or not out_dir or not mt_gen or not ref_path):
+    parser.error("the following arguments are required: -r1/--read1, -r2/--read2," \
+                " -o/--out_dir, -m/--mt_gen, -r/--ref_path")
 
 # If the mitos path isn't supplied, check if 'runmitos.py' is in PATH
 if not args.mitos_path:
