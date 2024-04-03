@@ -3,7 +3,7 @@
 '''
 This script can be used to summarize mtGrasp assembly outputs by providing a text file containing the relative or complete path(s) to assembly output folder(s). 
 '''
-mtgrasp_version = 'v1.1.2' # Make sure to edit the version for future releases
+mtgrasp_version = 'v1.1.3'
 
 import argparse
 import os
@@ -117,7 +117,7 @@ df = pd.DataFrame({"Assembly": assembly_list,
                    "Standardization Status": standardization_status_list
                    })
 
-df.to_csv(tsv_filename, sep="\t")
+df.to_csv(tsv_filename, sep="\t", index=False)
 
 with open(path_txt_filename, 'w') as f:
     for path in file_list:
