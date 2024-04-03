@@ -148,8 +148,8 @@ elif nosubsample and not annotate:
     print('Subsampling skipped')
 # Run mtgrasp.smk on the entire read dataset without subsampling
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --cores {threads} -p -k --config r1={r1} " \
-                                f"r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path}" \
-                                f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p} " \
+                                f"r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} " \
+                                f" threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
                                 f"mismatch_allowed={mismatch_allowed} annotate='No' mitos_path={mitos_path} "),
