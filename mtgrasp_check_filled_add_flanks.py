@@ -34,7 +34,7 @@ if gap_remaining == 0:
         # calculate the flank size
         flank_size = int((len(str(record.seq))-10)/2)
 
-        cmd = f"add_flanks.py {fake_gap_filled} {assembly} {flank_size} {output}"
+        cmd = f"mtgrasp_add_flanks.py {fake_gap_filled} {assembly} {flank_size} {output}"
         args = shlex.split(cmd)
         subprocess.call(args)
 # if the gap was not filled, copy the original assembly to the output

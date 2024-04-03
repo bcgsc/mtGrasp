@@ -178,5 +178,5 @@ else:
 
 
 if delete:
-    subprocess.run(shlex.split(f'bash {script_dir}/cleanup.sh {out_dir}'),
+    subprocess.run(shlex.split(f'bash {script_dir}/mtgrasp_cleanup.sh {out_dir}'),
                    check=True)
