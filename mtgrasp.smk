@@ -179,9 +179,9 @@ rule blast:
          # check if a blast database exists
          if not os.path.exists(f'{script_dir}/blast_db/{db_name}'):
             shell("mkdir -p {script_dir}/blast_db/{db_name} && cd {script_dir}/blast_db/{db_name} && makeblastdb -in {params.ref_fasta} -dbtype nucl -out {db_name}")
-            shell("export BLASTDB={script_dir}/blast_db/{db_name} && blast_best-hit.py {input} {db_name} > {output}")
+            shell("export BLASTDB={script_dir}/blast_db/{db_name} && mtgrasp_blast_best-hit.py {input} {db_name} > {output}")
          else:
-            shell("export BLASTDB={script_dir}/blast_db/{db_name} && blast_best-hit.py {input} {db_name} > {output}")
+            shell("export BLASTDB={script_dir}/blast_db/{db_name} && mtgrasp_blast_best-hit.py {input} {db_name} > {output}")
          check_blast_tsv(f'{output}')
          
 rule create_lists:
@@ -193,8 +193,8 @@ rule create_lists:
      benchmark:
          current_dir + "{library}/benchmark/k{k}_kc{kc}.create_lists.benchmark.txt"
      shell:
-          "extract_tsv_value.py {input} {output.ref_list} ref ; "
-          "extract_tsv_value.py {input} {output.query_list} query"
+          "mtgrasp_extract_tsv_value.py {input} {output.ref_list} ref ; "
+          "mtgrasp_extract_tsv_value.py {input} {output.query_list} query"
          
 
 rule extract_seq:
@@ -214,7 +214,7 @@ rule extract_seq:
      shell:
          "seqtk subseq {input.assemblies} {input.query} > {output.query_out} ; "
          "seqtk subseq {params.ref_fasta} {input.ref} > {output.ref_out} ;"
-         " mkdir -p {params.ref_outdir} && create_references_for_ntjoin.py {output.ref_out} {params.ref_outdir} {params.ref_config}"
+         " mkdir -p {params.ref_outdir} && mtgrasp_create_references_for_ntjoin.py {output.ref_out} {params.ref_outdir} {params.ref_config}"
 
 
 
@@ -267,7 +267,7 @@ rule pre_polishing:
           # If multiple contigs are found, both ntJoin and Sealer are needed  
           else: 
                print("Multiple contigs found, ntJoin scaffolding starts")
-               shell("""run_ntjoin.sh {params.workdir} {target} {params.ref_config} {log_ntjoin} {params.threads}""") 
+               shell("""mtgrasp_run_ntjoin.sh {params.workdir} {target} {params.ref_config} {log_ntjoin} {params.threads}""") 
                # check gaps need to be filled or not post-ntJoin
                if check_gaps(params.ntjoin_out) == 0:
                   print("---No Gaps Found After ntJoin, Gap Filling Not Needed---")
@@ -350,7 +350,7 @@ rule end_recovery:
               # end recover
               bf = bf_sealer(params.r1, params.r2, wildcards.library, params.threads, params.sealer_fpr,params.k)
               k = k_string_converter(params.k)
-              shell("end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {params.mismatch_allowed} {k}")
+              shell("mtgrasp_end_recover.py {input} {bf} {params.r1} {params.r2} {params.outdir} {params.threads} {params.p} {params.mismatch_allowed} {k}")
           else:
                 print("Error: input file is empty.")
                 exit(1)

@@ -131,7 +131,7 @@ if seqlen >= 12000 and start_pos !=0 and seq_distance(subseq_5, subseq_3) < mism
 
         create_fake_fastq_read(end_seq, 'end')
         create_fake_fastq_read(start_seq, 'start')
-        cmd = f'abyss_mergepairs.sh {out_dir} end_sequence.fastq start_sequence.fastq {mismatch_allowed}'
+        cmd = f'mtgrasp_abyss_mergepairs.sh {out_dir} end_sequence.fastq start_sequence.fastq {mismatch_allowed}'
         cmd_shlex = shlex.split(cmd)
         subprocess.call(cmd_shlex)
         # check if {outdir}/out_merged.fastq is not empty
@@ -139,7 +139,7 @@ if seqlen >= 12000 and start_pos !=0 and seq_distance(subseq_5, subseq_3) < mism
              print("abyss_mergepairs merged the ends")
         else:
              fh_out = open(f'{out_dir}/fake_gap_unfilled.fa', 'w')
-             print("abys_mergepairs failed to merge the ends")
+             print("abyss_mergepairs failed to merge the ends")
              print("Creating fake gap")
              end_bp = []
              start_bp = []
@@ -179,7 +179,7 @@ if os.path.exists(f"{out_dir}/fake_gap_unfilled.fa") and os.stat(f"{out_dir}/fak
     cmd_shlex = shlex.split(cmd)
     subprocess.call(cmd_shlex)
     print("Start adding flanks back to the original assembly") 
-    cmd = f'check_filled_add_flanks.py {out_dir}/fake_gap_filled_log.txt {out_dir}/fake_gap_filled_scaffold.fa {assembly} {out_dir}/flank_added_assembly.fa {out_dir}/fake_gap_unfilled.fa' 
+    cmd = f'mtgrasp_check_filled_add_flanks.py {out_dir}/fake_gap_filled_log.txt {out_dir}/fake_gap_filled_scaffold.fa {assembly} {out_dir}/flank_added_assembly.fa {out_dir}/fake_gap_unfilled.fa' 
     cmd_shlex = shlex.split(cmd)
     subprocess.call(cmd_shlex)
 
