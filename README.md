@@ -26,7 +26,7 @@ echo $PATH
 
 * Python v3.9+
 * Snakemake 
-* BLAST v2.10+
+* BLAST v2.9+
 * Biopython 
 * Seqtk 
 * ABySS v2.2.0+
@@ -34,7 +34,7 @@ echo $PATH
 * BWA 
 * Samtools 
 * Pilon v1.24+
-* MITOS
+* MITOS v2.1.7+
 * ntCard
 
 ---
