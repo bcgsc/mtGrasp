@@ -10,7 +10,15 @@ Concept: Lauren Coombe and Cecilia Yang
 
 Implementation: Cecilia Yang
 
-# Setup
+# Installation
+
+### Installation using conda
+You can easily install mtGrasp using conda/mamba:
+```
+conda install -c conda-forge -c bioconda mtgrasp
+```
+
+### Installation from the source code
 1. Download mtGrasp package
 
   You can download the latest version of the tarball file [here](https://github.com/bcgsc/mtGrasp/releases/download/v1.1.3/mtGrasp-v1.1.3.tar.gz).
@@ -37,8 +45,7 @@ echo $PATH
 * MITOS v2.1.7+
 * ntCard
 
----
-### Installation Instructions for Dependencies (For Conda users)
+### Installing dependencies using conda:
 Recommended (Faster):
 ```
 conda create -n mtgrasp python=3.10 mamba
