@@ -140,7 +140,7 @@ rule de_novo_assembly:
      
      run:
         bf = bf_abyss(input.r1, input.r2, wildcards.library, wildcards.k, params.abyss_fpr)
-        shell("abyss-pe --directory {wildcards.library}/abyss v=-v kc={wildcards.kc} j={params.threads}  k={wildcards.k}  B={bf}  name=k{wildcards.k}_kc{wildcards.kc} in='{input.r1} {input.r2}' &> {log}")
+        shell("abyss-pe --directory {wildcards.library}/abyss v=-v kc={wildcards.kc} j={params.threads}  k={wildcards.k}  B={bf}  name=k{wildcards.k}_kc{wildcards.kc} in='{input.r1} {input.r2}'")
        
 
        
