@@ -1,4 +1,4 @@
-# mtGrasp (Mitochondrial Reference-Grade Genome Assembly and Standardization Pipeline)
+# mtGrasp : Mitochondrial Genome Reference-grade Assembly and Standardization Pipeline
 
 
 
