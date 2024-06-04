@@ -61,8 +61,8 @@ def get_assembly_metrics(fasta):
               standardization_status = "StartSite_Strand_Standardized"
           elif "StartSite" in fasta_header and "Strand" not in fasta_header:
             standardization_status = "StartSite_Standardized"
-          elif "StartSite" not in fasta_header and "Strand" not in fasta_header:
-              standardization_status = "StartSite_Standardized"
+          elif "StartSite" not in fasta_header and "Strand" in fasta_header:
+              standardization_status = "Strand_Standardized"
           else:
               standardization_status = "Non-Standardized"
       else:

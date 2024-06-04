@@ -5,6 +5,7 @@ mtgrasp_version = 'v1.1.3'
 import os.path
 import shlex
 import subprocess
+import sys
 import math
 from Bio import SeqIO
 
@@ -109,13 +110,14 @@ def check_blast_tsv(filename):
         with open(filename, 'r') as file:
             lines = file.readlines()
             if len(lines) == 1:
-                print("No mitochondrial sequence found.")
-                exit(0)
+                print("No mitochondrial sequence found, exiting.", file=sys.stderr)
+                print("No mitochondrial sequence found.", file=sys.stdout)
+                sys.exit(0)
             else:
                 print("Mitochondrial sequence(s) found")
     except FileNotFoundError:
         print(f"File '{filename}' not found.")
-        exit(1)
+        sys.exit(1)
 
 out_dir = current_dir + config["out_dir"]
 
