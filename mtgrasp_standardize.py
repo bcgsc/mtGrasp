@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-mtgrasp_version = 'v1.1.3'
+mtgrasp_version = 'v1.1.4'
 
 import argparse
 import sys
