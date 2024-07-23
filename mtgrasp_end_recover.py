@@ -15,9 +15,9 @@ import subprocess
 import os
 from Bio import SeqIO
 
-if len(sys.argv[1:]) != 9:
-    print(f"Usage: {sys.argv[0]} <assembly> <bf> <r1> <r2> <out_dir> <threads> <p> <mismatch_allowed> <k>")
-    sys.exit(1)
+# if len(sys.argv[1:]) != 9:
+#     print(f"Usage: {sys.argv[0]} <assembly> <bf> <r1> <r2> <out_dir> <threads> <p> <mismatch_allowed> <k>")
+#     sys.exit(1)
 
 assembly = sys.argv[1]
 bf = sys.argv[2]
@@ -27,8 +27,8 @@ out_dir = sys.argv[5]
 threads = sys.argv[6]
 p = sys.argv[7]
 mismatch_allowed = int(sys.argv[8])
-k= sys.argv[9]
-
+k = sys.argv[9]
+print(k)
 
 
 cmd = f'mkdir -p {out_dir}'
