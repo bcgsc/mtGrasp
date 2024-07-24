@@ -28,6 +28,7 @@ threads = sys.argv[6]
 p = sys.argv[7]
 mismatch_allowed = int(sys.argv[8])
 k = sys.argv[9:]
+k = " ".join(k)
 
 
 cmd = f'mkdir -p {out_dir}'
@@ -178,6 +179,7 @@ if os.path.exists(f"{out_dir}/fake_gap_unfilled.fa") and os.stat(f"{out_dir}/fak
     print("fake_gap_unfilled.fa created")
     print("Start sealer gap filling")
     cmd = f'abyss-sealer -b{bf} -j {threads} -vv {k} -P {p} -o {out_dir}/fake_gap_filled -S {out_dir}/fake_gap_unfilled.fa {r1} {r2}'
+    print(cmd)
     cmd_shlex = shlex.split(cmd)
     subprocess.call(cmd_shlex)
     print("Start adding flanks back to the original assembly")
