@@ -22,7 +22,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version), library = config["out_dir"], k = config["k"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version), library = config["out_dir"], k = config["kmer"], kc = config["kc"])
 
 
 
@@ -235,7 +235,7 @@ rule pre_polishing:
         r2=config['r2'],
         sealer_fpr=config['sealer_fpr'],
         threads=config['threads'],
-        p=config['p'],
+        p=config['p_gapfill'],
         k=config['sealer_k'],
         ref_config = current_dir + "{library}/blast/k{k}_kc{kc}-ntjoin_ref_config.csv",
         sealer=current_dir + "{library}/prepolishing/k{k}_kc{kc}_sealer.log",

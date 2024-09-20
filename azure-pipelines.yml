@@ -19,7 +19,7 @@ jobs:
 
   - script: |
       source activate mtgrasp_ci
-      conda install --yes -c bioconda -c conda-forge python=3.10 mamba
+      conda install --yes -c bioconda -c conda-forge python mamba
       mamba install --yes -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
     displayName: Install dependencies
 

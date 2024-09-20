@@ -119,16 +119,16 @@ if test_run:
     subprocess.run(shlex.split(f"{script_dir}/test/test.sh {mitos_path}"), check=True)
 elif dry_run:
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk -np --config r1={r1} r2={r2} out_dir={out_dir} "\
-                                f"mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} threads={threads} " \
-                                f"abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p}  sealer_k={sealer_k} " \
+                                f"mt_code={mt_gen} kmer={kmer} kc={kc} ref_path={ref_path} threads={threads} " \
+                                f"abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p}  sealer_k={sealer_k} " \
                                 f"end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} " \
                                 f"end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} "\
                                 f"annotate='N/A' mitos_path={mitos_path} "),
                    check=True)
 elif unlock:
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --unlock --config r1={r1} r2={r2} " \
-                                f"out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} " \
-                                f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p} " \
+                                f"out_dir={out_dir} mt_code={mt_gen} kmer={kmer} kc={kc} ref_path={ref_path} " \
+                                f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
                                 f"mismatch_allowed={mismatch_allowed} annotate='N/A' mitos_path={mitos_path} "),
@@ -138,8 +138,8 @@ elif nosubsample and annotate:
     print('Subsampling skipped')
 # Run mtgrasp.smk on the entire read dataset without subsampling
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --cores {threads} -p -k --config r1={r1} " \
-                                f"r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} " \
-                                f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p} " \
+                                f"r2={r2} out_dir={out_dir} mt_code={mt_gen} kmer={kmer} kc={kc} ref_path={ref_path} " \
+                                f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
                                 f"mismatch_allowed={mismatch_allowed} annotate='Yes' mitos_path={mitos_path} "),
@@ -148,8 +148,8 @@ elif nosubsample and not annotate:
     print('Subsampling skipped')
 # Run mtgrasp.smk on the entire read dataset without subsampling
     subprocess.run(shlex.split(f"snakemake -s {script_dir}/mtgrasp.smk --cores {threads} -p -k --config r1={r1} " \
-                                f"r2={r2} out_dir={out_dir} mt_code={mt_gen} k={kmer} kc={kc} ref_path={ref_path} " \
-                                f" threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p={p} " \
+                                f"r2={r2} out_dir={out_dir} mt_code={mt_gen} kmer={kmer} kc={kc} ref_path={ref_path} " \
+                                f" threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
                                 f"mismatch_allowed={mismatch_allowed} annotate='No' mitos_path={mitos_path} "),
