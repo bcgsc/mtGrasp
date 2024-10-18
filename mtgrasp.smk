@@ -22,7 +22,7 @@ else:
 # Start of the pipeline
 rule all:
      input:
-        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_%s-assembly.fa"%(mtgrasp_version), library = config["out_dir"], k = config["kmer"], kc = config["kc"])
+        expand(current_dir + "{library}/final_output/{library}_k{k}_kc{kc}/{library}_k{k}_kc{kc}.final-mtgrasp_{version}-assembly.fa", library = config["out_dir"], k = config["kmer"], kc = config["kc"], version=mtgrasp_version)
 
 
 
