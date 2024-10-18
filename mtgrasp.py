@@ -8,7 +8,7 @@ import subprocess
 import shlex
 import sys
 
-MTGRASP_VERSION = 'mtGrasp v1.1.7'
+MTGRASP_VERSION = 'mtGrasp v1.1.8'
 
 parser = argparse.ArgumentParser(description='mtGrasp: de novo assembly of reference-grade animal mitochondrial genomes')
 parser.add_argument('-r1', '--read1', help='Full path to forward read fastq.gz file [Required]')
