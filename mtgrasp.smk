@@ -179,11 +179,11 @@ rule blast:
          db_name = os.path.splitext(os.path.basename(params.ref_fasta))[0]
 
          # check if a blast database exists
-         if not os.path.exists(f'{script_dir}/blast_db/{db_name}'):
-            shell("mkdir -p {script_dir}/blast_db/{db_name} && cd {script_dir}/blast_db/{db_name} && makeblastdb -in {params.ref_fasta} -dbtype nucl -out {db_name}")
-            shell("export BLASTDB={script_dir}/blast_db/{db_name} && mtgrasp_blast_best-hit.py {input} {db_name} > {output}")
+         if not os.path.exists(f'{library}/blast_db/{db_name}'):
+            shell("mkdir -p {library}/blast_db/{db_name} && cd {library}/blast_db/{db_name} && makeblastdb -in {params.ref_fasta} -dbtype nucl -out {db_name}")
+            shell("export BLASTDB={library}/blast_db/{db_name} && mtgrasp_blast_best-hit.py {input} {db_name} > {output}")
          else:
-            shell("export BLASTDB={script_dir}/blast_db/{db_name} && mtgrasp_blast_best-hit.py {input} {db_name} > {output}")
+            shell("export BLASTDB={library}/blast_db/{db_name} && mtgrasp_blast_best-hit.py {input} {db_name} > {output}")
          check_blast_tsv(f'{output}')
          
 rule create_lists:
