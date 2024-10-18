@@ -3,7 +3,7 @@
 '''
 This script can be used to summarize mtGrasp assembly outputs by providing a text file containing the relative or complete path(s) to assembly output folder(s). 
 '''
-mtgrasp_version = 'v1.1.7'
+mtgrasp_version = 'v1.1.8'
 
 import argparse
 import os

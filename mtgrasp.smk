@@ -1,5 +1,5 @@
 # Snakemake file for mtGrasp pipeline
-mtgrasp_version = 'v1.1.7'
+mtgrasp_version = 'v1.1.8'
 
 
 import os.path
