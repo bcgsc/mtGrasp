@@ -60,6 +60,8 @@ conda activate mtgrasp
 conda install -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqtk abyss ntjoin bwa samtools pilon ntcard 'mitos>=2.1.7'
 ```
 
+### Using docker/singularity
+Users can also use the docker images located at [Quay.io](https://quay.io/repository/biocontainers/mtgrasp?tab=tags) to run mtGrasp using docker or singularity.
 
 # Test run
 ### Test-run mtGrasp to ensure all required dependencies are installed properly
