@@ -1,16 +1,35 @@
+[![link](https://img.shields.io/badge/mtGrasp-manuscript-brightgreen)](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.14506)
+
+
 # mtGrasp : Mitochondrial Genome Reference-grade Assembly and Standardization Pipeline
 
+Mitochondrial genome assembly and standardization pipeline for paired-end short DNA reads
 
 
-## Mitochondrial genome assembly and standardization pipeline for paired-end short DNA reads
+## Contents
 
+1. [Credit](#credit)
+2. [Description](#description)
+3. [Installation](#install)
+4. [Dependencies](#dependencies)
+5. [Demo](#demo)
+6. [Usage](#usage)
+7. [Examples](#examples)
+8. [Output](#output)
+9. [MtG standardization](#standardize)
+10. [Summarize mtGrasp output](#summary)
+11. [Citing](#citing)
+12. [License](#license)
 
-# Credits
+## Credit  <a name=credit></a>
 Concept: Lauren Coombe and Cecilia Yang
-
 Implementation: Cecilia Yang
 
-# Installation
+## Description <a name=description></a>
+
+The Mitochondrial Genome Reference-grade Assembly and Standardization Pipeline (mtGrasp) is a streamlined, high-throughput mitogenome assembly utility
+
+## Installation <a name=install></a>
 
 ### Installation using conda
 You can easily install mtGrasp using conda/mamba:
@@ -29,8 +48,7 @@ conda install -c conda-forge -c bioconda mtgrasp
 echo $PATH
 ```
 
-
-3. Install dependencies
+3. Install dependencies <a name=dependencies></a>
 
 * Python v3.9+
 * Snakemake 
@@ -63,7 +81,7 @@ conda install -c conda-forge -c bioconda snakemake 'blast>=2.9.0' biopython seqt
 ### Using docker/singularity
 Users can also use the docker images located at [Quay.io](https://quay.io/repository/biocontainers/mtgrasp?tab=tags) to run mtGrasp using docker or singularity.
 
-# Test run
+# Test run <a name=demo></a>
 ### Test-run mtGrasp to ensure all required dependencies are installed properly
 The test will take ~5-10min to complete.
 
@@ -76,7 +94,7 @@ If `runmitos.py` is not available on your PATH:
 mtgrasp.py -test -mp /path/to/mitos_install_dir
 ```
 Note: `/path/to/mitos_install_dir` is the location where the main MITOS script `runmitos.py` is stored
-# Running mtGrasp
+# Running mtGrasp <a name=usage></a>
 
 ### Required Parameters 
 
@@ -157,7 +175,7 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 
 ---
-### Examples
+### Examples <a name=examples></a>
 
 Dry run mtGrasp with default parameters
 
@@ -185,7 +203,7 @@ mtgrasp.py -r1 /path/to/read1.fq.gz -r2 /path/to/read2.fq.gz -o test_out -m 2 -r
 ```
 
 ---
-### Where to Look For Output Files
+### Where to Look For Output Files <a name=output></a>
 
 Output files can be found in a subfolder named `final_output` under the user-specified output directory `<out_dir>`. 
 
@@ -202,7 +220,7 @@ If you are not interested in the standardized mitogenome sequence(s) or MITOS an
 
 
 ---
-### Standardize any mitochondrial sequence(s) using mtGrasp
+### Standardize any mitochondrial sequence(s) using mtGrasp <a name=standardize></a>
 If you have any mitochondrial sequence(s) and would like to standardize it/them using mtGrasp, you can do so by using mtGrasp's `mtgrasp_standardize.py` script. 
 
 For usage, please run `mtgrasp_standardize.py -h` for help:
@@ -251,7 +269,7 @@ Because mtGrasp annotation uses a third-party tool called [MITOS](https://www.sc
 
 ---
 
-### Summarize mtGrasp results
+### Summarize mtGrasp results <a name=summary></a>
 
 ```
 mtgrasp_summarize.py -i <Input text file> -p <Prefix of the summary files>
@@ -276,3 +294,36 @@ This script will summarize the mtGrasp results for all assembly output folders l
 
 Finally, `{prefix}_mtgrasp_{mtgrasp_version}_path_to_output.txt` will contain the complete path(s) to the assembly output fasta file(s)
 
+
+## Citing <a name=citing></a>
+
+Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/mtGrasp.svg)](https://github.com/bcgsc/mtGrasp/stargazers) and for using and promoting this free software! We hope that mtGrasp is useful to you and your research.
+
+If you use mtGrasp, please cite:
+
+[mtGrasp: Streamlined reference-grade mitochondrial genome assembly and standardization to enhance metazoan mitogenome resources](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.14506)
+<pre>
+Lopez, M. L. D., Yang, C. L., Coombe, L., Warren, R. L., Allison, M. J., Imbery, J. J., Birol, I., & Helbing, C. C. (2025). mtGrasp: Streamlined reference-grade mitochondrial genome assembly and standardization to enhance metazoan mitogenome resources. Methods in Ecology and Evolution, 00, 1–10. https://doi.org/10.1111/2041-210X.14506
+</pre>
+
+
+## License <a name=license></a>
+
+mtGrasp Copyright (c) 2024-present British Columbia Cancer Agency Branch.  All rights reserved.
+
+mtGrasp is released under the GNU General Public License v3
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+For commercial licensing options, please contact
+Patrick Rebstein <prebstein@bccancer.bc.ca>
