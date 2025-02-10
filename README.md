@@ -17,7 +17,7 @@ Mitochondrial genome assembly and standardization pipeline for paired-end short 
 7. [Examples](#examples)
 8. [Output](#output)
 9. [MtG standardization](#standardize)
-10. [Summarize mtGrasp output](#summary)
+10. [Summarize mtGrasp results](#summary)
 11. [Citing](#citing)
 12. [License](#license)
 
