@@ -23,6 +23,7 @@ Mitochondrial genome assembly and standardization pipeline for paired-end short 
 
 ## Credit  <a name=credit></a>
 Concept: Lauren Coombe and Cecilia Yang
+
 Implementation: Cecilia Yang
 
 ## Description <a name=description></a>
