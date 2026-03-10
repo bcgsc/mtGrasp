@@ -5,7 +5,7 @@
 
 import sys
 
-ntjoin_reference_weight = 2 #Refer to ntJoin README for more info: https://github.com/bcgsc/ntJoin
+ntjoin_reference_weight = 2 #Refer to ntJoin README for more info: https://github.com/BirolLab/ntJoin
 input = sys.argv[1]
 output = sys.argv[2]
 config = sys.argv[3]
