@@ -41,7 +41,7 @@ conda install -c conda-forge -c bioconda mtgrasp
 ### Installation from the source code
 1. Download mtGrasp package
 
-  You can download the latest version of the tarball file [here](https://github.com/bcgsc/mtGrasp/releases/download/v1.1.8/mtGrasp-v1.1.8.tar.gz).
+  You can download the latest version of the tarball file [here](https://github.com/BirolLab/mtGrasp/releases/download/v1.1.8/mtGrasp-v1.1.8.tar.gz).
 
 
 2. Add the mtGrasp directory to your PATH, use the following command to check if it is added correctly
@@ -131,7 +131,7 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 `-c` or `--kc=N`: k-mer minimum coverage multiplicity cutoff for ABySS [3]
 
-***More information on optimizing -k and -c for ABySS***: https://github.com/bcgsc/abyss#optimizing-the-parameters-k-and-kc
+***More information on optimizing -k and -c for ABySS***: https://github.com/BirolLab/abyss#optimizing-the-parameters-k-and-kc
 
 `-sub` or `--subsample=N`: Subsample N read pairs from two paired FASTQ files  [2000000] 
 
@@ -298,7 +298,7 @@ Finally, `{prefix}_mtgrasp_{mtgrasp_version}_path_to_output.txt` will contain th
 
 ## Citing <a name=citing></a>
 
-Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/mtGrasp.svg)](https://github.com/bcgsc/mtGrasp/stargazers) and for using and promoting this free software! We hope that mtGrasp is useful to you and your research.
+Thank you for your [![Stars](https://img.shields.io/github/stars/BirolLab/mtGrasp.svg)](https://github.com/BirolLab/mtGrasp/stargazers) and for using and promoting this free software! We hope that mtGrasp is useful to you and your research.
 
 If you use mtGrasp, please cite:
 
