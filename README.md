@@ -41,7 +41,7 @@ conda install -c conda-forge -c bioconda mtgrasp
 ### Installation from the source code
 1. Download mtGrasp package
 
-  You can download the latest version of the tarball file [here](https://github.com/BirolLab/mtGrasp/releases/download/v1.1.8/mtGrasp-v1.1.8.tar.gz).
+  You can download the latest version of the tarball file [here](https://github.com/BirolLab/mtGrasp/releases/download/v1.1.9/mtGrasp-v1.1.9.tar.gz).
 
 
 2. Add the mtGrasp directory to your PATH, use the following command to check if it is added correctly
