@@ -16,7 +16,13 @@ parser.add_argument('-r2', '--read2', help='Full path to reverse read fastq.gz f
 parser.add_argument('-o', '--out_dir', help='Output directory [Required]')
 parser.add_argument('-m', '--mt_gen', help='Mitochondrial genetic code [Required]')
 parser.add_argument('-r', '--ref_path', help='Full path to the reference fasta file [Required]')
+parser.add_argument('--min_contig_len',
+    help='Minimum scaffold length retained before mitochondrial BLAST filtering [1000]',
+    default=1000, type=int)
 
+parser.add_argument('--max_contig_len',
+    help='Maximum scaffold length retained before mitochondrial BLAST filtering [20000]',
+    default=20000, type=int)
 parser.add_argument('-t', '--threads', help='Number of threads [8]', default = 8, type=int)
 parser.add_argument('-k', '--kmer', help='k-mer size used in ABySS de novo assembly [91]', default = 91, type=int)
 parser.add_argument('-c', '--kc', help='minimum k-mer multiplicity for ABySS [3]', default = 3, type=int)
@@ -85,6 +91,8 @@ annotate = args.annotate
 delete = args.delete
 mitos_path = args.mitos_path
 test_run = args.test_run
+min_contig_len = args.min_contig_len
+max_contig_len = args.max_contig_len
 
 if not test_run and (not r1 or not r2 or not out_dir or not mt_gen or not ref_path):
     parser.error("the following arguments are required: -r1/--read1, -r2/--read2," \
