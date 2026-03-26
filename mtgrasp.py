@@ -131,6 +131,7 @@ elif dry_run:
                                 f"abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p}  sealer_k={sealer_k} " \
                                 f"end_recov_sealer_fpr={end_recov_sealer_fpr} end_recov_p={end_recov_p} " \
                                 f"end_recov_sealer_k={end_recov_sealer_k} mismatch_allowed={mismatch_allowed} "\
+                                f"min_contig_len={min_contig_len} max_contig_len={max_contig_len} "\
                                 f"annotate='N/A' mitos_path={mitos_path} "),
                    check=True)
 elif unlock:
@@ -139,6 +140,7 @@ elif unlock:
                                 f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
+                                f"min_contig_len={min_contig_len} max_contig_len={max_contig_len} "\
                                 f"mismatch_allowed={mismatch_allowed} annotate='N/A' mitos_path={mitos_path} "),
                    check=True)
 # if subsample is specified, run the pipeline on the subsampled reads
@@ -150,6 +152,7 @@ elif nosubsample and annotate:
                                 f"threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
+                                f"min_contig_len={min_contig_len} max_contig_len={max_contig_len} "\
                                 f"mismatch_allowed={mismatch_allowed} annotate='Yes' mitos_path={mitos_path} "),
                    check=True)
 elif nosubsample and not annotate:
@@ -160,6 +163,7 @@ elif nosubsample and not annotate:
                                 f" threads={threads} abyss_fpr={abyss_fpr} sealer_fpr={sealer_fpr} p_gapfill={p} " \
                                 f" sealer_k={sealer_k}  end_recov_sealer_fpr={end_recov_sealer_fpr} " \
                                 f"end_recov_p={end_recov_p} end_recov_sealer_k={end_recov_sealer_k} " \
+                                f"min_contig_len={min_contig_len} max_contig_len={max_contig_len} "\
                                 f"mismatch_allowed={mismatch_allowed} annotate='No' mitos_path={mitos_path} "),
                    check=True)
 elif not nosubsample and annotate :
@@ -168,6 +172,7 @@ elif not nosubsample and annotate :
     subprocess.run(shlex.split(f"sub_then_run_mtgrasp.sh {out_dir} {r1} {r2} {subsample} \
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
+                               {min_contig_len} {max_contig_len} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} \
                                 'Yes' {mitos_path}"),
                    check=True)
@@ -177,6 +182,7 @@ elif not nosubsample and not annotate:
     subprocess.run(shlex.split(f"sub_then_run_mtgrasp.sh {out_dir} {r1} {r2} {subsample} \
                                {read1_base} {read2_base} {script_dir} {threads} {mt_gen} {kmer} \
                                {kc} {ref_path}  {abyss_fpr} {sealer_fpr} {p} {sealer_k} \
+                               {min_contig_len} {max_contig_len} \
                                {end_recov_sealer_fpr} {end_recov_p} {end_recov_sealer_k} {mismatch_allowed} 'No' {mitos_path}"),
                    check=True)
 
