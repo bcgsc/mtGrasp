@@ -157,6 +157,11 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 `-ma` or `--mismatch_allowed=N`: Maximum number of mismatches allowed while determining the overlapping region between the two ends of the mitochondrial assembly [1]
 
+`--min_contig_len` : Minimum length of contigs to assemble [1000]
+
+`--max_contig_len` : Minimum length of contigs to assemble [20000]
+
+
  
 ---
 

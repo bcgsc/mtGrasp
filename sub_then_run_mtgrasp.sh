@@ -20,12 +20,14 @@ abyss_fpr=${13}
 sealer_fpr=${14}
 p=${15}
 sealer_k=${16}
-end_recov_sealer_fpr=${17}
-end_recov_p=${18}
-end_recov_sealer_k=${19}
-mismatch_allowed=${20}
-annotate=${21}
-mitos_path=${22}
+MIN_CONTIG_LEN=${17}
+MAX_CONTIG_LEN=${18}
+end_recov_sealer_fpr=${19}
+end_recov_p=${20}
+end_recov_sealer_k=${21}
+mismatch_allowed=${22}
+annotate=${23}
+mitos_path=${24}
 
 
 current_dir="$(pwd)/"
@@ -42,5 +44,5 @@ else
     wait
 fi && snakemake -s ${script_dir}/mtgrasp.smk --cores ${threads} -p -k \
 --config r1=${current_dir}${out_dir}/subsets/${read1_base}_${subsample}.fastq.gz r2=${current_dir}${out_dir}/subsets/${read2_base}_${subsample}.fastq.gz out_dir=${out_dir} mt_code=${mt_gen} kmer=${kmer} kc=${kc} ref_path=${ref_path} threads=${threads} \
-abyss_fpr=${abyss_fpr} sealer_fpr=${sealer_fpr} p_gapfill=${p} sealer_k=${sealer_k} end_recov_sealer_fpr=${end_recov_sealer_fpr} \
+abyss_fpr=${abyss_fpr} sealer_fpr=${sealer_fpr} p_gapfill=${p} sealer_k=${sealer_k} end_recov_sealer_fpr=${end_recov_sealer_fpr} min_contig_len=${MIN_CONTIG_LEN} max_contig_len=${MAX_CONTIG_LEN} \
 end_recov_p=${end_recov_p} end_recov_sealer_k=${end_recov_sealer_k} mismatch_allowed=${mismatch_allowed} annotate=${annotate} mitos_path=${mitos_path} && rm ${out_dir}/subsets/*${subsample}.fastq.gz
