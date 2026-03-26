@@ -20,14 +20,14 @@ abyss_fpr=${13}
 sealer_fpr=${14}
 p=${15}
 sealer_k=${16}
-end_recov_sealer_fpr=${17}
-end_recov_p=${18}
-end_recov_sealer_k=${19}
-mismatch_allowed=${20}
-annotate=${21}
-mitos_path=${22}
-MIN_CONTIG_LEN=${23}
-MAX_CONTIG_LEN=${24}
+MIN_CONTIG_LEN=${17}
+MAX_CONTIG_LEN=${18}
+end_recov_sealer_fpr=${19}
+end_recov_p=${20}
+end_recov_sealer_k=${21}
+mismatch_allowed=${22}
+annotate=${23}
+mitos_path=${24}
 
 
 current_dir="$(pwd)/"
