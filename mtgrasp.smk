@@ -149,14 +149,17 @@ rule de_novo_assembly:
 
 #Filtering for mitochondrial sequences
 rule select_length:
-     input:
-        rules.de_novo_assembly.output
-     output:
-        current_dir + "{library}/blast/k{k}_kc{kc}-scaffolds.fa"
-     benchmark:
-        current_dir + "{library}/benchmark/k{k}_kc{kc}.select_length.benchmark.txt"
-     shell:
-        """awk '!/^>/ {{ next }} {{ getline seq }} length(seq) >= 1000 && length(seq) <= 20000 {{ print $0 "\\n" seq }}' {input} > {output}"""
+ input:
+  rules.de_novo_assembly.output
+ output:
+  current_dir + "{library}/blast/k{k}_kc{kc}-scaffolds.fa"
+ benchmark:
+  current_dir + "{library}/benchmark/k{k}_kc{kc}.select_length.benchmark.txt"
+ params:
+  min_len=config["min_contig_len"],
+  max_len=config["max_contig_len"]
+ shell:
+  """awk '!/^>/ {{ next }} {{ getline seq }} length(seq) >= {params.min_len} && length(seq) <= {params.max_len} {{ print $0 "\\n" seq }}' {input} > {output}"""
 
 
 rule blast:
