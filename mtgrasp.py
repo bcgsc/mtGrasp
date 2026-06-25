@@ -10,7 +10,7 @@ import shutil
 import sys
 import os
 
-MTGRASP_VERSION = 'mtGrasp v1.1.9'
+MTGRASP_VERSION = 'mtGrasp v1.1.10'
 
 parser = argparse.ArgumentParser(description='mtGrasp: de novo assembly of reference-grade animal mitochondrial genomes')
 parser.add_argument('-r1', '--read1', help='Full path to forward read fastq.gz file [Required]')
