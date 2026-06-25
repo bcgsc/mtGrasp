@@ -6,8 +6,9 @@ mtGrasp: de novo assembly of reference-grade animal mitochondrial genomes
 import argparse
 import subprocess
 import shlex
+import shutil
 import sys
-import re
+import os
 
 MTGRASP_VERSION = 'mtGrasp v1.1.9'
 
@@ -101,15 +102,11 @@ if not test_run and (not r1 or not r2 or not out_dir or not mt_gen or not ref_pa
 
 # If the mitos path isn't supplied, check if 'runmitos.py' is in PATH
 if not args.mitos_path:
-    output = subprocess.Popen(['which', 'runmitos.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, _ = output.communicate()
-    path_output = stdout.decode().strip()
-    if '/runmitos.py' in path_output:
-        mitos_path = path_output.replace('/runmitos.py','')
-    elif mitos_match := re.search(r'^(\S+)\/runmitos$', path_output):
-        mitos_path = mitos_match.group(1)
+    mitos_exec = shutil.which('runmitos.py') or shutil.which('runmitos')
+    if mitos_exec:
+        mitos_path = os.path.dirname(mitos_exec)
     else:
-        print("Please ensure runmitos.py is available on your PATH or specify the path using -mp")
+        print("Please ensure runmitos.py or runmitos is available on your PATH or specify the path using -mp")
         sys.exit(1)
 
 
