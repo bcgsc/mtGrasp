@@ -17,7 +17,7 @@ parser.add_argument('-o', '--output', help='Output directory', required=True)
 parser.add_argument('-p', '--prefix', help='Prefix for the output file', default='mtgrasp_standardized')
 parser.add_argument('-c', '--gencode', help='Mitochondrial genetic code used for gene annotation', required=True)
 parser.add_argument('-a', '--annotate', help='Run gene annotation on the final assembly output [False]', action='store_true')
-parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
+parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py/runmitos', default = None)
 
 args = parser.parse_args()
 file = args.input
@@ -158,8 +158,13 @@ def find_conda_env(env_name):
         print(f"Conda environment {env_name} not found.")
         sys.exit(1)
 
-
-        
+def get_full_mitos_path(mitos_path):
+    """Returns the full path to mitos. As of v2.1.10, the executable was renamed to runmitos."""
+    if os.path.exists(f"{mitos_path}/runmitos.py"):
+        return f"{mitos_path}/runmitos.py"
+    if os.path.exists(f"{mitos_path}/runmitos"):
+        return f"{mitos_path}/runmitos"
+    return None
 
 # This function runs MitoS annotation
 def run_mitos(env_name, file, code, dir, script_dir, mitos_path):
@@ -172,15 +177,14 @@ def run_mitos(env_name, file, code, dir, script_dir, mitos_path):
        return output
     # Run mitos independently without conda
     else:
-      if os.path.exists(f"{mitos_path}/runmitos.py"):
-
+      if full_path_to_mitos := get_full_mitos_path(mitos_path):
         # Add mitos_path to PATH
         new_path = mitos_path
         current_path = os.environ.get('PATH', '')
         new_path_value = f'{new_path}:{current_path}'
         os.environ['PATH'] = new_path_value
 
-        cmd = f"{mitos_path}/runmitos.py -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
+        cmd = f"{full_path_to_mitos} -i {file} --noplots  -c {code} -o {dir} --linear --refdir {script_dir}/data/refseqs_mitos -r refseq81m"
         process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
         output = process.communicate()[0].decode("utf-8").strip()
         return output

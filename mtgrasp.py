@@ -6,7 +6,9 @@ mtGrasp: de novo assembly of reference-grade animal mitochondrial genomes
 import argparse
 import subprocess
 import shlex
+import shutil
 import sys
+import os
 
 MTGRASP_VERSION = 'mtGrasp v1.1.9'
 
@@ -51,7 +53,7 @@ parser.add_argument('-a', '--abyss_fpr', help='False positive rate for the Bloom
 parser.add_argument('-s', '--sealer_fpr',
                     help='False positive rate for the Bloom filter used by Sealer during gap filling [0.01]',
                     default = 0.01, type=float)
-parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
+parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py/runmitos', default = None)
 parser.add_argument('-an', '--annotate', help='Run gene annotation on the final assembly output [False]',
                     action='store_true')
 parser.add_argument('-d', '--delete',
@@ -100,13 +102,11 @@ if not test_run and (not r1 or not r2 or not out_dir or not mt_gen or not ref_pa
 
 # If the mitos path isn't supplied, check if 'runmitos.py' is in PATH
 if not args.mitos_path:
-    output = subprocess.Popen(['which', 'runmitos.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, _ = output.communicate()
-    path_output = stdout.decode().strip()
-    if '/runmitos.py' in path_output:
-        mitos_path = path_output.replace('/runmitos.py','')
+    mitos_exec = shutil.which('runmitos.py') or shutil.which('runmitos')
+    if mitos_exec:
+        mitos_path = os.path.dirname(mitos_exec)
     else:
-        print("Please ensure runmitos.py is available on your PATH or specify the path using -mp")
+        print("Please ensure runmitos.py or runmitos is available on your PATH or specify the path using -mp")
         sys.exit(1)
 
 

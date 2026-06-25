@@ -90,11 +90,11 @@ The test will take ~5-10min to complete.
 mtgrasp.py -test
 ```
 
-If `runmitos.py` is not available on your PATH:
+If `runmitos.py` or `runmitos` is not available on your PATH:
 ```
 mtgrasp.py -test -mp /path/to/mitos_install_dir
 ```
-Note: `/path/to/mitos_install_dir` is the location where the main MITOS script `runmitos.py` is stored
+Note: `/path/to/mitos_install_dir` is the location where the main MITOS script `runmitos.py` or `runmitos` is stored
 # Running mtGrasp <a name=usage></a>
 
 ### Required Parameters 
@@ -141,7 +141,7 @@ However, if such sequences are unavailable, you can move up the taxonomic hierar
 
 `-d` or `--delete`: Delete intermediate subdirectories/files once mtGrasp finishes [False]
 
-`-mp` or `--mitos_path`: Complete path to `runmitos.py` (e.g., `/home/user/path/to/mitos/bin`), this is required if `runmitos.py` is not found on your `PATH` [None]
+`-mp` or `--mitos_path`: Complete path to `runmitos.py/runmitos` (e.g., `/home/user/path/to/mitos/bin`), this is required if `runmitos.py` or `runmitos` is not found on your `PATH` [None]
 
 `-test` or `--test_run`:Test run mtGrasp to ensure all required dependencies are installed [False]
 
