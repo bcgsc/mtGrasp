@@ -7,6 +7,7 @@ import argparse
 import subprocess
 import shlex
 import sys
+import re
 
 MTGRASP_VERSION = 'mtGrasp v1.1.9'
 
@@ -51,7 +52,7 @@ parser.add_argument('-a', '--abyss_fpr', help='False positive rate for the Bloom
 parser.add_argument('-s', '--sealer_fpr',
                     help='False positive rate for the Bloom filter used by Sealer during gap filling [0.01]',
                     default = 0.01, type=float)
-parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py', default = None)
+parser.add_argument('-mp', '--mitos_path', help='Complete path to runmitos.py/runmitos', default = None)
 parser.add_argument('-an', '--annotate', help='Run gene annotation on the final assembly output [False]',
                     action='store_true')
 parser.add_argument('-d', '--delete',
@@ -105,6 +106,8 @@ if not args.mitos_path:
     path_output = stdout.decode().strip()
     if '/runmitos.py' in path_output:
         mitos_path = path_output.replace('/runmitos.py','')
+    elif mitos_match := re.search(r'^(\S+)\/runmitos$', path_output):
+        mitos_path = mitos_match.group(1)
     else:
         print("Please ensure runmitos.py is available on your PATH or specify the path using -mp")
         sys.exit(1)
